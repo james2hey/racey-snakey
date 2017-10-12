@@ -4,8 +4,8 @@
 #include "navswitch.h"
 #include "snake.h"
 
-#define DISPLAY_TASK_RATE 2000
-#define CONTROL_TASK_RATE 100
+#define DISPLAY_TASK_RATE 5000
+#define CONTROL_TASK_RATE 70
 #define UPDATE_TASK_RATE 10
 
 void draw_points(tinygl_point_t points[], uint8_t length) {
@@ -34,18 +34,30 @@ static void control_task_init(void) {
     navswitch_init();
 }
 
+static bool dir_okay(uint8_t dir, snake_t* snake) {
+    if (snake->cur_length == 1) {
+        return true;
+    } else {
+        tinygl_point_t head_posn = new_head_posn(dir, snake);
+        return (head_posn.x != snake->tail[1].x || head_posn.y != snake->tail[1].y);
+    } 
+}
+
 static void control_task(void* data) {
     snake_t* snake = data;
     
+    tinygl_clear();
+    tinygl_update();
     navswitch_update();
+    display_task(data);
     
-    if (navswitch_push_event_p(NAVSWITCH_NORTH) && snake->dir != DOWN) {
+    if (navswitch_push_event_p(NAVSWITCH_NORTH) && dir_okay(UP, snake)) {
         snake->dir = UP;
-    } else if (navswitch_push_event_p(NAVSWITCH_SOUTH) && snake->dir != UP) {
+    } else if (navswitch_push_event_p(NAVSWITCH_SOUTH) && dir_okay(DOWN, snake)) {
         snake->dir = DOWN;
-    } else if (navswitch_push_event_p(NAVSWITCH_WEST) && snake->dir != RIGHT) {
+    } else if (navswitch_push_event_p(NAVSWITCH_WEST) && dir_okay(LEFT, snake)) {
         snake->dir = LEFT;
-    } else if (navswitch_push_event_p(NAVSWITCH_EAST) && snake->dir != LEFT) {
+    } else if (navswitch_push_event_p(NAVSWITCH_EAST) && dir_okay(RIGHT, snake)) {
         snake->dir = RIGHT;
     }
 }
@@ -57,7 +69,7 @@ static void update_task(void* data) {
 
 
 int main(void) {
-    snake_t snake = create_snake(1, 1);
+    snake_t snake = create_snake(1, 3);
     
     task_t tasks[] = {
         {.func = display_task, .period = TASK_RATE / DISPLAY_TASK_RATE, .data = &snake},

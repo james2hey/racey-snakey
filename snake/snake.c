@@ -9,7 +9,7 @@
 snake_t create_snake(uint8_t x, uint8_t y) {
     snake_t new_snake;
     new_snake.cur_length = 1;
-    new_snake.length = 4;
+    new_snake.length = 1;
     new_snake.dir = UP;
     new_snake.tail[0].x = x;
     new_snake.tail[0].y = y;
@@ -20,6 +20,33 @@ void snake_eat(snake_t* snake) {
     if (snake->length < MAX_SNAKE_LENGTH) { 
         snake->length++;
     }
+}
+
+tinygl_point_t new_head_posn(uint8_t dir, snake_t* snake) {
+    tinygl_point_t head_posn = snake->tail[0];
+    if (dir == UP) {
+        head_posn.y--;
+        if (head_posn.y < 0) {
+            head_posn.y = TINYGL_HEIGHT - 1;
+        }
+    } else if (dir == RIGHT) {
+        head_posn.x++;
+        if (head_posn.x > TINYGL_WIDTH - 1) {
+            head_posn.x = 0;
+        }
+    } else if (dir == DOWN) {
+        head_posn.y++;
+        if (head_posn.y > TINYGL_HEIGHT - 1) {
+            head_posn.y = 0;
+        }
+    } else if (dir == LEFT) {
+        head_posn.x--;
+        if (head_posn.x < 0) {
+            head_posn.x = TINYGL_WIDTH - 1;
+        }
+    }
+    
+    return head_posn;
 }
 
 void snake_move(snake_t* snake) {
@@ -33,25 +60,5 @@ void snake_move(snake_t* snake) {
         snake->tail[i].y = snake->tail[i - 1].y;
     }
     
-    if (snake->dir == UP) {
-        snake->tail[0].y--;
-        if (snake->tail[0].y < 0) {
-            snake->tail[0].y = TINYGL_HEIGHT - 1;
-        }
-    } else if (snake->dir == RIGHT) {
-        snake->tail[0].x++;
-        if (snake->tail[0].x > TINYGL_WIDTH - 1) {
-            snake->tail[0].x = 0;
-        }
-    } else if (snake->dir == DOWN) {
-        snake->tail[0].y++;
-        if (snake->tail[0].y > TINYGL_HEIGHT - 1) {
-            snake->tail[0].y = 0;
-        }
-    } else if (snake->dir == LEFT) {
-        snake->tail[0].x--;
-        if (snake->tail[0].x < 0) {
-            snake->tail[0].x = TINYGL_WIDTH - 1;
-        }
-    }
+    snake->tail[0] = new_head_posn(snake->dir, snake);
 }
