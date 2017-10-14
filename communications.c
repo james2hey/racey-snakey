@@ -33,6 +33,7 @@ void receive_snake(snake_t* snake_buffer) {
 
 void send_snake(snake_t* snake) {
     char snake_string[snake->cur_length + 2];
+    snake_string[0] = snake->cur_length;
     uint8_t i = 0;
     for (i = 0; i < snake->cur_length; i++) {
         snake_string[i + 1] = TINYGL_WIDTH * snake->tail[i].y + snake->tail[i].x;
