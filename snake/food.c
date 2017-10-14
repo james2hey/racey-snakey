@@ -26,7 +26,7 @@ static bool check_forbidden(uint8_t posn, uint8_t num_forbidden, tinygl_point_t*
 
 //NOTE TO FUTURE SELF: this algorithm is a bit wonky and should be improved
 tinygl_point_t new_food(uint8_t num_forbidden, tinygl_point_t* forbidden) {
-    //uint8_t food_posn = random(timer_get(), TINYGL_WIDTH * TINYGL_HEIGHT - 1);
+    uint8_t food_posn = random(timer_get(), TINYGL_WIDTH * TINYGL_HEIGHT - 1);
     
     while (check_forbidden(food_posn, num_forbidden, forbidden)) {
         food_posn = (food_posn + 1) % (TINYGL_WIDTH * TINYGL_HEIGHT);

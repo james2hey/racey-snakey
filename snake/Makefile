@@ -16,7 +16,10 @@ all: game.out
 
 
 # Compile: create object files from C source files.
-game.o: game.c snake.h ../../../drivers/avr/system.h ../../../utils/task.h ../../../utils/tinygl.h ../../../drivers/navswitch.h
+game.o: game.c snake.h food.h ../../../drivers/avr/system.h ../../../utils/task.h ../../../utils/tinygl.h ../../../drivers/navswitch.h game.h
+	$(CC) -c $(CFLAGS) $< -o $@
+	
+food.o: food.c ../../../drivers/avr/system.h ../../../utils/tinygl.h ../../../drivers/avr/timer.h food.h
 	$(CC) -c $(CFLAGS) $< -o $@
 	
 snake.o: snake.c ../../../drivers/avr/system.h ../../../utils/tinygl.h snake.h
@@ -48,7 +51,7 @@ navswitch.o: ../../../drivers/navswitch.c ../../../drivers/avr/system.h ../../..
 
 
 # Link: create ELF output file from object files.
-game.out: game.o snake.o system.o display.o ledmat.o font.o tinygl.o timer.o task.o navswitch.o
+game.out: game.o snake.o food.o system.o display.o ledmat.o font.o tinygl.o timer.o task.o navswitch.o
 	$(CC) $(CFLAGS) $^ -o $@ -lm
 	$(SIZE) $@
 
