@@ -14,14 +14,19 @@ void receive_snake(snake_t* snake_buffer) {
             if (snake_length > MAX_SNAKE_LENGTH) {
                 if (read >= 0 && read <= MAX_SNAKE_LENGTH) {
                     snake_length = read;
-                    snake_buffer->cur_length = snake_length;
                 }
-            } else {
+            } else if (read >= 0 && read <= TINYGL_WIDTH * TINYGL_HEIGHT - 1) {
                 snake_buffer->tail[num_read].x = read % TINYGL_WIDTH;
                 snake_buffer->tail[num_read].y = read / TINYGL_WIDTH;
                 num_read++;
             }
         }
+    }
+    
+    if (num_read == snake_length) {
+        snake_buffer->cur_length = snake_length;
+    } else {
+        snake_buffer->cur_length = 0;
     }
 }
 
