@@ -4,7 +4,7 @@
 void receive_snake(snake_t* snake_buffer) {
     timer_tick_t now = timer_get();
     timer_tick_t end_time = now + READ_TIMEOUT * TIMER_RATE;
-    char read;
+    uint8_t read;
     uint8_t num_read = 0;
     uint8_t snake_length = MAX_SNAKE_LENGTH + 1;
     
