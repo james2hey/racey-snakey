@@ -60,7 +60,6 @@ static void led_countdown(void)
 /** Waits for both players to push the navswitch. */
 static void ready_up(void)
 {
-    int transmit = 0;
     while(playerReady == 0 || opponentReady == 0)
     {
         pacer_wait ();
@@ -75,18 +74,14 @@ static void ready_up(void)
             }
             
             playerReady = 1;
-            transmit = SENDING_NUMBER;
-            //ir_uart_putc(SENDING_NUMBER);
+            ir_uart_putc('z');
             tinygl_ready_text();
             //break;
         }
         if (ir_uart_read_ready_p()) {
-            if (ir_uart_getc() == SENDING_NUMBER) {
+            if (ir_uart_getc() == 'z') {
                 opponentReady = 1; 
             }
-        }
-        if (ir_uart_write_ready_p()) {
-            ir_uart_putc_nocheck(transmit);
         }
     }
 }
