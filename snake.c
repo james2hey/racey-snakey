@@ -6,23 +6,43 @@
 
 #include "snake.h"
 
-snake_t create_snake(uint8_t x, uint8_t y) {
+/** Creates a new snake structure from given initial properties
+ *  @param x the x coordinate the snake starts at
+ *  @param y the y coordinate the snake starts at
+ *  @param length the initial length of the snake
+ *  @param dir the snakes initial direction of motion
+ *  @return the snake structure
+*/
+snake_t create_snake(uint8_t x, uint8_t y, uint8_t length, uint8_t dir)
+{
     snake_t new_snake;
     new_snake.cur_length = 1;
-    new_snake.length = 2;
-    new_snake.dir = UP;
+    new_snake.length = length;
+    new_snake.dir = dir;
     new_snake.tail[0].x = x;
     new_snake.tail[0].y = y;
     return new_snake;
 }
 
-void snake_eat(snake_t* snake) {
+/** Function to be called when a snake eats food. This increases\
+ *  the snake's length up to the maximum length
+ *  @param snake the snake which has eaten food
+*/
+void snake_eat(snake_t* snake)
+{
     if (snake->length < MAX_SNAKE_LENGTH) { 
         snake->length++;
     }
 }
 
-tinygl_point_t new_head_posn(uint8_t dir, snake_t* snake) {
+/** Calculates the position the snake's head will be at after
+ *  moving in the given direction
+ *  @param dir the direction the snake will move in
+ *  @param snake the snake that is moving
+ *  @return the new position of the head
+*/
+tinygl_point_t new_head_posn(uint8_t dir, snake_t* snake)
+{
     tinygl_point_t head_posn = snake->tail[0];
     if (dir == UP) {
         head_posn.y--;
@@ -49,7 +69,12 @@ tinygl_point_t new_head_posn(uint8_t dir, snake_t* snake) {
     return head_posn;
 }
 
-void snake_move(snake_t* snake) {
+/** Updates the position of the snake and its tail. The snake will wrap
+ *  through walls.
+ *  @param snake the snake to move
+*/
+void snake_move(snake_t* snake)
+{
     if (snake->cur_length < snake->length) {
         snake->cur_length++;
     }
@@ -63,9 +88,42 @@ void snake_move(snake_t* snake) {
     snake->tail[0] = new_head_posn(snake->dir, snake);
 }
 
-void snake_draw(snake_t* snake) {
+/** Draws the given snake onto the LED matrix
+ *  @param snake the snake to draw
+*/
+void snake_draw(snake_t* snake)
+{
     uint8_t i = 0;
     for (i = 0; i < snake->cur_length; i++) {
         tinygl_draw_point(snake->tail[i], 1);
     }
 }
+
+/** Detects if the snake's head has collided with the given point
+ *  @param snake the snake
+ *  @param point the point to check for collision
+ *  @return returns true if there is a collision, false otherwise
+*/
+bool collision(snake_t* snake, tinygl_point_t point)
+{
+    return (snake->tail[0].x == point.x && snake->tail[0].y == point.y);
+}
+
+/** Detects if a snake has collided with the tail of another. If
+ *  snake1 = snake2 the function detects if snake1 has collided
+ *  with itself.
+ *  @param snake1 the snake who's head is checked for collision
+ *  @param snake2 the snake who's tail is checked for collision
+ *  @return returns true if the snakes have collided, false otherwise
+*/
+bool snake_collision(snake_t* snake1, snake_t* snake2) {
+    uint8_t i = 1;
+    for (i = 1; i < snake2->cur_length; i++) {
+        if (collision(snake1, snake2->tail[i])) {
+            return true;
+        }
+    }
+    return false;
+}
+
+
