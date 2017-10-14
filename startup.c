@@ -13,7 +13,7 @@
 #include "game.h" 
 #include "stdbool.h"
 //#include "end.h"
-
+//j
 
 #define PACER_RATE 1000
 #define LOOP_RATE 1000
