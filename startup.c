@@ -86,6 +86,12 @@ int main (void)
 
     led_countdown();
     begin_game();
+    
+    while (1) {
+        tinygl_text("a");
+        tinygl_update();
+        ir_uart_putc('a');
+    }
     return 0;
 }
 

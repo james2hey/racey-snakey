@@ -19,7 +19,7 @@ all: startup.out
 startup.o: startup.c ../../drivers/avr/ir_uart.h ../../drivers/avr/system.h ../../drivers/display.h ../../drivers/navswitch.h ../../fonts/font5x7_1.h ../../utils/font.h ../../utils/pacer.h ../../utils/tinygl.h game.h
 	$(CC) -c $(CFLAGS) $< -o $@
 
-game.o: game.c snake.h food.h ../../drivers/avr/system.h ../../utils/task.h ../../utils/tinygl.h ../../drivers/navswitch.h game.h
+game.o: game.c snake.h food.h communications.h ../../drivers/avr/system.h ../../utils/task.h ../../utils/tinygl.h ../../drivers/navswitch.h game.h
 	$(CC) -c $(CFLAGS) $< -o $@
 
 food.o: food.c ../../drivers/avr/system.h ../../utils/tinygl.h ../../drivers/avr/timer.h food.h
@@ -28,6 +28,8 @@ food.o: food.c ../../drivers/avr/system.h ../../utils/tinygl.h ../../drivers/avr
 snake.o: snake.c ../../drivers/avr/system.h ../../utils/tinygl.h snake.h
 	$(CC) -c $(CFLAGS) $< -o $@
 
+communications.o: communcations.c ../../drivers/avr/system.h ../../drivers/avr.timer.h ../../drivers/avr/ir_uart.c ../../utils/tinygl.h snake.h communications.h
+	$(CC) -c $(CFLAGS) $< -o $@
 
 ir_uart.o: ../../drivers/avr/ir_uart.c ../../drivers/avr/ir_uart.h ../../drivers/avr/pio.h ../../drivers/avr/system.h ../../drivers/avr/timer0.h ../../drivers/avr/usart1.h
 	$(CC) -c $(CFLAGS) $< -o $@
@@ -76,7 +78,7 @@ tinygl.o: ../../utils/tinygl.c ../../drivers/avr/system.h ../../drivers/display.
 
 
 # Link: create ELF output file from object files.
-startup.out: startup.o ir_uart.o pio.o prescale.o system.o timer.o timer0.o usart1.o display.o ledmat.o navswitch.o font.o pacer.o tinygl.o task.o game.o food.o snake.o
+startup.out: startup.o ir_uart.o pio.o prescale.o system.o timer.o timer0.o usart1.o display.o ledmat.o navswitch.o font.o pacer.o tinygl.o task.o game.o food.o snake.o communications.o
 	$(CC) $(CFLAGS) $^ -o $@ -lm
 	$(SIZE) $@
 

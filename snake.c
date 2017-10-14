@@ -1,5 +1,5 @@
 /** @file snake.c
- *  @author Gerry Toft, 53712395
+ *  @author Gerry Toft, 53712395, and James Toohey, 27073776, team 426
  *  @date 12/10/2017
  *  @brief Defines a snake structure and functions for controlling it.
 */

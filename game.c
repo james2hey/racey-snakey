@@ -1,5 +1,5 @@
 /** @file game.c
- *  @author Gerry Toft, 53712395
+ *  @author Gerry Toft, 53712395, and James Toohey, 27073776, team 426
  *  @date 14/10/2017
  *  @brief Controls the main game loop
 */
@@ -11,9 +11,19 @@
 #define CONTROL_TASK_RATE 70
 #define UPDATE_TASK_RATE 5
 
+/** Define the starting position of the snakes */
+#define SNAKE1_X 0
+#define SNAKE1_Y 6
+#define SNAKE1_DIR UP
+#define SNAKE2_X 4
+#define SNAKE2_Y 0
+#define SNAKE2_DIR DOWN
+#define SNAKE_LENGTH 2
+
 /**Structure to hold game data*/
 typedef struct game_data_s {
     snake_t snake1;
+    snake_t snake2;
     tinygl_point_t food;
     bool running;
 } game_data_t;
@@ -27,6 +37,7 @@ static void display_task(void* data)
     
     tinygl_clear();
     snake_draw(&game_data->snake1);
+    snake_draw(&game_data->snake2);
     
     if (game_data->running) {
         tinygl_draw_point(game_data->food, 1);
@@ -84,6 +95,9 @@ static void update_task(void* data)
 {
     game_data_t* game_data = data;
     
+    send_snake(&game_data->snake1);
+    receive_snake(&game_data->snake2);
+    
     if (game_data->running) {
         snake_move(&game_data->snake1);
     } else if (game_data->snake1.cur_length > 0) {
@@ -104,10 +118,16 @@ static void update_task(void* data)
 }
 
 /** Begins the snake game */
-void begin_game(void)
+void begin_game(uint8_t player_num)
 {
     game_data_t game_data;
-    game_data.snake1 = create_snake(0, 6, 2, UP);
+    
+    if (player_num == 1) {
+        game_data.snake1 = create_snake(SNAKE1_X, SNAKE1_Y, SNAKE_LENGTH, SNAKE1_DIR);
+    } else {
+        game_data.snake1 = create_snake(SNAKE2_X, SNAKE2_Y, SNAKE_LENGTH, SNAKE2_DIR);
+    }
+    
     game_data.food.x = 2;
     game_data.food.y = 3;
     game_data.running = true;
