@@ -19,6 +19,7 @@
 #define LOOP_RATE 1000
 #define MESSAGE_RATE 16
 #define COUNT_ITERATIONS 6000
+#define SENDING_NUMBER 191
 
 static int playerReady = 0; 
 static int opponentReady = 0;
@@ -72,13 +73,15 @@ static void ready_up(void)
                 playerNumber = 1;
             }
             playerReady = 1;
-            ir_uart_putc(playerReady);
+            ir_uart_putc(SENDING_NUMBER);
             tinygl_ready_text();
-            //break;
+            break;
         }
             
         if (ir_uart_read_ready_p()) {
+            if (ir_uart_getc() = SENDING_NUMBER) {
             opponentReady = 1; 
+            }
         }
     }
 }
