@@ -5,13 +5,13 @@
 #include "tinygl.h"
 #include "../fonts/font5x7_1.h"
 #include "timer.h"
+#include "game.h"
 
 
 #define PACER_RATE 1000
 #define LOOP_RATE 1000
 #define MESSAGE_RATE 16
-#define COUNTDOWN_TASK_RATE 10
-#define COUNT_ITERATIONS 6000
+#define COUNT_ITERATIONS 3//6000
 
 static int playerReady = 0; 
 static int opponentReady = 0;
@@ -80,7 +80,7 @@ int main (void)
     ready_up();
 
     led_countdown();
-    //init_game
+    begin_game();
     return 0;
 }
 
