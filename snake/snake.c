@@ -9,7 +9,7 @@
 snake_t create_snake(uint8_t x, uint8_t y) {
     snake_t new_snake;
     new_snake.cur_length = 1;
-    new_snake.length = 1;
+    new_snake.length = 2;
     new_snake.dir = UP;
     new_snake.tail[0].x = x;
     new_snake.tail[0].y = y;
@@ -61,4 +61,11 @@ void snake_move(snake_t* snake) {
     }
     
     snake->tail[0] = new_head_posn(snake->dir, snake);
+}
+
+void snake_draw(snake_t* snake) {
+    uint8_t i = 0;
+    for (i = 0; i < snake->cur_length; i++) {
+        tinygl_draw_point(snake->tail[i], 1);
+    }
 }

@@ -3,19 +3,17 @@
 #include "task.h"
 #include "navswitch.h"
 #include "snake.h"
+#include "food.h"
 
 #define DISPLAY_TASK_RATE 5000
 #define CONTROL_TASK_RATE 70
 #define UPDATE_TASK_RATE 10
 
-void draw_points(tinygl_point_t points[], uint8_t length) {
-    uint8_t i = 0;
-    
-    tinygl_clear();
-    for (i = 0; i < length; i++) {
-        tinygl_draw_point(points[i], 1);
-    }
-}
+
+typedef struct game_data_s {
+    snake_t snake1;
+    tinygl_point_t food;
+} game_data_t;
 
 
 static void display_task_init(void) {
@@ -24,9 +22,11 @@ static void display_task_init(void) {
 
 
 static void display_task(void* data) {
-    snake_t* snake = data;
+    game_data_t* game_data = data;
     
-    draw_points(snake->tail, snake->cur_length);
+    tinygl_clear();
+    snake_draw(&game_data->snake1);
+    tinygl_draw_point(game_data->food, 1);
     tinygl_update();
 }
 
@@ -44,37 +44,40 @@ static bool dir_okay(uint8_t dir, snake_t* snake) {
 }
 
 static void control_task(void* data) {
-    snake_t* snake = data;
+    game_data_t* game_data = data;
     
     tinygl_clear();
     tinygl_update();
     navswitch_update();
-    display_task(data);
     
-    if (navswitch_push_event_p(NAVSWITCH_NORTH) && dir_okay(UP, snake)) {
-        snake->dir = UP;
-    } else if (navswitch_push_event_p(NAVSWITCH_SOUTH) && dir_okay(DOWN, snake)) {
-        snake->dir = DOWN;
-    } else if (navswitch_push_event_p(NAVSWITCH_WEST) && dir_okay(LEFT, snake)) {
-        snake->dir = LEFT;
-    } else if (navswitch_push_event_p(NAVSWITCH_EAST) && dir_okay(RIGHT, snake)) {
-        snake->dir = RIGHT;
+    if (navswitch_push_event_p(NAVSWITCH_NORTH) && dir_okay(UP, &game_data->snake1)) {
+        game_data->snake1.dir = UP;
+    } else if (navswitch_push_event_p(NAVSWITCH_SOUTH) && dir_okay(DOWN, &game_data->snake1)) {
+        game_data->snake1.dir = DOWN;
+    } else if (navswitch_push_event_p(NAVSWITCH_WEST) && dir_okay(LEFT, &game_data->snake1)) {
+        game_data->snake1.dir = LEFT;
+    } else if (navswitch_push_event_p(NAVSWITCH_EAST) && dir_okay(RIGHT, &game_data->snake1)) {
+        game_data->snake1.dir = RIGHT;
     }
 }
 
 static void update_task(void* data) {
-    snake_t* snake = data;
-    snake_move(snake);
+    game_data_t* game_data = data;
+    snake_move(&game_data->snake1);
 }
 
 
 int main(void) {
-    snake_t snake = create_snake(1, 3);
+    game_data_t game_data;
+    game_data.snake1 = create_snake(0, 6);
+    game_data.food = new_food(game_data.snake1.cur_length, game_data.snake1.tail);
+    //game_data.food.x = 2;
+    //game_data.food.y = 3;
     
     task_t tasks[] = {
-        {.func = display_task, .period = TASK_RATE / DISPLAY_TASK_RATE, .data = &snake},
-        {.func = control_task, .period = TASK_RATE / CONTROL_TASK_RATE, .data = &snake},
-        {.func = update_task, .period = TASK_RATE / UPDATE_TASK_RATE, .data = &snake}
+        {.func = display_task, .period = TASK_RATE / DISPLAY_TASK_RATE, .data = &game_data},
+        {.func = control_task, .period = TASK_RATE / CONTROL_TASK_RATE, .data = &game_data},
+        {.func = update_task, .period = TASK_RATE / UPDATE_TASK_RATE, .data = &game_data}
     };
     
     display_task_init();

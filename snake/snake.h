@@ -24,3 +24,5 @@ void snake_eat(snake_t* snake);
 tinygl_point_t new_head_posn(uint8_t dir, snake_t* snake);
 
 void snake_move(snake_t* snake);
+
+void snake_draw(snake_t* snake);
