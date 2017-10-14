@@ -19,6 +19,7 @@
 #define SNAKE2_Y 0
 #define SNAKE2_DIR DOWN
 #define SNAKE_LENGTH 2
+//blahblah
 
 /**Structure to hold game data*/
 typedef struct game_data_s {
