@@ -69,3 +69,9 @@ void snake_draw(snake_t* snake) {
         tinygl_draw_point(snake->tail[i], 1);
     }
 }
+
+bool collision(snake_t* snake, tinygl_point_t point) {
+    
+}
+
+

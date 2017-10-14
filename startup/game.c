@@ -1,15 +1,13 @@
 #include "game.h"
 
+#define DISPLAY_TASK_RATE 1400
+#define CONTROL_TASK_RATE 70
+#define UPDATE_TASK_RATE 5
 
 typedef struct game_data_s {
     snake_t snake1;
     tinygl_point_t food;
 } game_data_t;
-
-
-static void display_task_init(void) {
-    tinygl_init(DISPLAY_TASK_RATE);
-}
 
 
 static void display_task(void* data) {
@@ -19,10 +17,6 @@ static void display_task(void* data) {
     snake_draw(&game_data->snake1);
     tinygl_draw_point(game_data->food, 1);
     tinygl_update();
-}
-
-static void control_task_init(void) {
-    navswitch_init();
 }
 
 static bool dir_okay(uint8_t dir, snake_t* snake) {
@@ -64,8 +58,6 @@ void begin_game(void) {
     game_data.food = new_food(game_data.snake1.cur_length, game_data.snake1.tail);
     //game_data.food.x = 2;
     //game_data.food.y = 3;
-    display_task_init();
-    control_task_init();
     
     task_t tasks[] = {
         {.func = display_task, .period = TASK_RATE / DISPLAY_TASK_RATE, .data = &game_data},

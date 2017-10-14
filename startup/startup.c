@@ -60,7 +60,7 @@ static void ready_up(void)
             playerReady = 1;
             ir_uart_putc(playerReady);
             tingl_ready_text();
-            break;
+            //break;
         }
             
         if (ir_uart_read_ready_p()) {

@@ -70,9 +70,8 @@ static void update_task(void* data) {
 int main(void) {
     game_data_t game_data;
     game_data.snake1 = create_snake(0, 6);
-    game_data.food = new_food(game_data.snake1.cur_length, game_data.snake1.tail);
-    //game_data.food.x = 2;
-    //game_data.food.y = 3;
+    game_data.food.x = 2;
+    game_data.food.y = 3;
     
     task_t tasks[] = {
         {.func = display_task, .period = TASK_RATE / DISPLAY_TASK_RATE, .data = &game_data},
