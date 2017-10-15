@@ -186,9 +186,9 @@ int main (void)
     bool keep_playing = true;
     while (keep_playing) {
         ready_up();
-        led_countdown();
+        //led_countdown();
         //begin_game(playerNumber);
-        end_game(1);
+        //end_game(1);
         keep_playing = restart();
     }
     tinygl_clear();
