@@ -9,7 +9,7 @@
 /** Define frequency of tasks*/
 #define DISPLAY_TASK_RATE 1400
 #define CONTROL_TASK_RATE 70
-#define UPDATE_TASK_RATE 5
+#define UPDATE_TASK_RATE 3
 
 /** Define the starting position of the snakes */
 #define SNAKE1_X 0
@@ -124,7 +124,7 @@ static void send_snake(void* data, uint8_t sender)
 {
     game_data_t* game_data = data;
     
-    if (game_data->player_num == 1) {
+    if (game_data->player_num == sender) {
         send_val(game_data->snake1.dir);
     } else {
         game_data->snake2.dir = receive_val();
@@ -149,7 +149,7 @@ static void update_task(void* data)
     send_snake(data, 2);
           
     if (game_data->running) {
-        //snake_move(&game_data->snake1);
+        snake_move(&game_data->snake1);
         snake_move(&game_data->snake2);
     } else if (game_data->snake1.cur_length > 0) {
         game_data->snake1.cur_length--;
