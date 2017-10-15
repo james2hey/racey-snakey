@@ -149,7 +149,7 @@ static void update_task(void* data)
     send_snake(data, 2);
           
     if (game_data->running) {
-        snake_move(&game_data->snake1);
+        //snake_move(&game_data->snake1);
         snake_move(&game_data->snake2);
     } else if (game_data->snake1.cur_length > 0) {
         game_data->snake1.cur_length--;
