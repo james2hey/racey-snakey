@@ -189,7 +189,7 @@ int main (void)
     while (keep_playing) {
         ready_up();
         //led_countdown();
-        //begin_game(playerNumber);
+        begin_game(playerNumber);
         //end_game(1);
         keep_playing = restart();
     }

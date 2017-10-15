@@ -12,9 +12,6 @@
 #include "ir_uart.h"
 #include "tinygl.h"
 
-/** Sends a single integer across the IR transmitter
- *  @param val the integer to transmit
-*/
 void send_val(uint8_t val);
 
 uint8_t receive_val(void);

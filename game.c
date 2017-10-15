@@ -93,7 +93,7 @@ static void control_task(void* data)
  *  @param sender the player number (1 or 2) of the funkit that is
  *  sending the snake.
 */
-static void send_snake(void* data, uint8_t sender)
+/*static void send_snake(void* data, uint8_t sender)
 {
     game_data_t* game_data = data;
     
@@ -118,6 +118,23 @@ static void send_snake(void* data, uint8_t sender)
             game_data->snake2.tail[i] = receive_coord();
         }
     }
+}*/
+
+static void send_snake(void* data, uint8_t sender)
+{
+    game_data_t* game_data = data;
+    
+    if (game_data->player_num == 1) {
+        send_val(game_data->snake1.dir);
+    } else {
+        game_data->snake2.dir = receive_val();
+    }
+    
+    if (game_data->player_num == sender) {
+        send_val(game_data->snake1.length);
+    } else {
+        game_data->snake2.length = receive_val();
+    }
 }
 
 /** Updates the game state by moving the snakes, checking if
@@ -127,9 +144,13 @@ static void send_snake(void* data, uint8_t sender)
 static void update_task(void* data)
 {
     game_data_t* game_data = data;
+    
+    send_snake(data, 1);
+    send_snake(data, 2);
           
     if (game_data->running) {
         snake_move(&game_data->snake1);
+        snake_move(&game_data->snake2);
     } else if (game_data->snake1.cur_length > 0) {
         game_data->snake1.cur_length--;
     } else {
@@ -145,9 +166,6 @@ static void update_task(void* data)
         snake_eat(&game_data->snake1);
         game_data->food = new_food(game_data->snake1.cur_length, game_data->snake1.tail);
     }
-    
-    send_snake(data, 1);
-    send_snake(data, 2);
 }
 
 /** Begins the snake game */
