@@ -26,7 +26,7 @@
     if (num_read == snake_length) {
         snake_buffer->cur_length = snake_length;
     }
-}
+}*/
 
 
 void send_snake(snake_t* snake) {
@@ -36,19 +36,17 @@ void send_snake(snake_t* snake) {
     for (i = 0; i < snake->cur_length; i++) {
         snake_string[i + 1] = TINYGL_WIDTH * snake->tail[i].y + snake->tail[i].x;
     }
-    snake_string[snake->cur_length] = '\0';
+    snake_string[snake->cur_length + 1] = '\0';
     ir_uart_puts(snake_string);
-}*/
+}
 
 
 void receive_snake(snake_t* snake_buffer) {
     uint8_t read = ir_uart_getc();
-    snake_buffer->tail[0].x = read % TINYGL_WIDTH;
-    snake_buffer->tail[0].y = read / TINYGL_WIDTH;
-    snake_buffer->cur_length = 1;
-}
-
-void send_snake(snake_t* snake) {
-    uint8_t send = TINYGL_WIDTH * snake->tail[0].y + snake->tail[0].x;
-    ir_uart_putc(send);
+    snake_buffer->cur_length = read;
+    uint8_t i = 0;
+    for (i = 0; i < snake_buffer->cur_length; i++) {
+        snake_buffer->tail[0].x = read % TINYGL_WIDTH;
+        snake_buffer->tail[0].y = read / TINYGL_WIDTH;
+    }
 }
