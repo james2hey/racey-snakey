@@ -166,14 +166,14 @@ int main (void)
     tinygl_clear();
     tinygl_update();
     
-    //while(1) {
-    //    
-    //    if (ir_uart_read_ready_p()) {
-    //        char character = ir_uart_getc();
-    //        display_character(character);
-    //        tinygl_update();
-    //    }
-    //}
+    while(1) {
+        
+        if (ir_uart_read_ready_p()) {
+            char character = ir_uart_getc();
+            display_character(character);
+            tinygl_update();
+        }
+    }
     return 0;
 }
 

@@ -7,7 +7,7 @@
 #include "tinygl.h"
 #include "snake.h"
 
-#define READ_TIMEOUT 0.05
+#define READ_TIMEOUT 2000
 
 void receive_snake(snake_t* snake_buffer);
 

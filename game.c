@@ -19,13 +19,13 @@
 #define SNAKE2_Y 0
 #define SNAKE2_DIR DOWN
 #define SNAKE_LENGTH 2
-//blahblah
 
 /**Structure to hold game data*/
 typedef struct game_data_s {
     snake_t snake1;
     snake_t snake2;
     tinygl_point_t food;
+    uint8_t player_num;
     bool running;
 } game_data_t;
 
@@ -95,10 +95,7 @@ static void control_task(void* data)
 static void update_task(void* data)
 {
     game_data_t* game_data = data;
-    
-    send_snake(&game_data->snake1);
-    receive_snake(&game_data->snake2);
-    
+          
     if (game_data->running) {
         snake_move(&game_data->snake1);
     } else if (game_data->snake1.cur_length > 0) {
@@ -107,23 +104,36 @@ static void update_task(void* data)
         //end the game blah i dont know how to do this
         return;
     }
-    
+
     if (snake_collision(&game_data->snake1, &game_data->snake1)) {
         game_data->running = false;
     }
-    
+
     if (collision(&game_data->snake1, game_data->food)) {
         snake_eat(&game_data->snake1);
         game_data->food = new_food(game_data->snake1.cur_length, game_data->snake1.tail);
     }
+    
+    if (game_data->player_num == 1) {
+        send_snake(&game_data->snake1);
+    } else {
+        receive_snake(&game_data->snake2);
+    }
+    
+    if (game_data->player_num == 2) {
+        send_snake(&game_data->snake1);
+    } else {
+        receive_snake(&game_data->snake2);
+    }
 }
 
 /** Begins the snake game */
-void begin_game(uint8_t player_num)
+void begin_game(uint8_t player_n)
 {
     game_data_t game_data;
+    game_data.player_num = player_n;
     
-    if (player_num == 1) {
+    if (game_data.player_num == 1) {
         game_data.snake1 = create_snake(SNAKE1_X, SNAKE1_Y, SNAKE_LENGTH, SNAKE1_DIR);
         game_data.snake2 = create_snake(SNAKE2_X, SNAKE2_Y, SNAKE_LENGTH, SNAKE2_DIR);
     } else {
@@ -138,7 +148,7 @@ void begin_game(uint8_t player_num)
     task_t tasks[] = {
         {.func = display_task, .period = TASK_RATE / DISPLAY_TASK_RATE, .data = &game_data},
         {.func = control_task, .period = TASK_RATE / CONTROL_TASK_RATE, .data = &game_data},
-        {.func = update_task, .period = TASK_RATE / UPDATE_TASK_RATE, .data = &game_data}
+        {.func = update_task, .period = TASK_RATE / UPDATE_TASK_RATE, .data = &game_data},
     };
     
     task_schedule(tasks, ARRAY_SIZE (tasks));
