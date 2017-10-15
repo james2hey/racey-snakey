@@ -1,5 +1,5 @@
 /** @file startup.c
- *  @author James Toohey, 27073776
+ *  @author Gerry Toft, 53712395, and James Toohey, 27073776, team 426
  *  @date 12/10/2017
  *  @brief Waits for both users to ready up, then begins the game.
 */
@@ -20,7 +20,8 @@
 #define COUNT_ITERATIONS 6000
 #define SENDING_NUMBER 191
 
-static int playerNumber = 0;
+static int amount = 0;
+static int player_number = 0;
 
 /** Initilizes tinygl and sets the message to scroll and
  *  ask for the player to ready up. */
@@ -33,6 +34,16 @@ static void tinygl_startup(void)
     tinygl_text_mode_set (TINYGL_TEXT_MODE_SCROLL);
 }
 
+/** Retransmits the given character after 6000 calls.
+ * @param character the character to potentially be retransmitted.
+ */
+static void retransmit(char character) {
+    amount++;
+    if (amount > COUNT_ITERATIONS) {
+        amount = 0;
+        ir_uart_putc(character);
+    }
+}
 
 /** Sets the text to "wait" */
 static void tinygl_ready_text(void)
@@ -41,7 +52,7 @@ static void tinygl_ready_text(void)
 }
 
 
-/** Displays a message counting down from 3    */
+/** Displays a generic count down message from 3    */
 static void led_countdown(void)
 {
     tinygl_clear();
@@ -64,6 +75,7 @@ static void ready_up(void)
     tinygl_text("  READY UP!");
     int playerReady = 0; 
     int opponentReady = 0;
+    bool pushed = false;
 
     while(playerReady == 0 || opponentReady == 0)
     {
@@ -73,11 +85,11 @@ static void ready_up(void)
         
         if (navswitch_push_event_p (NAVSWITCH_PUSH)) {
             if (opponentReady == 1) {
-                playerNumber = 2;
+                player_number = 2;
             } else {
-                playerNumber = 1;
+                player_number = 1;
             }
-            
+            pushed = true;
             playerReady = 1;
             ir_uart_putc('z');
             tinygl_ready_text();
@@ -87,6 +99,9 @@ static void ready_up(void)
             if (ir_uart_getc() == 'z') {
                 opponentReady = 1; 
             }
+        }
+        if (pushed) {
+            retransmit('z');
         }
     }
 }
@@ -107,7 +122,7 @@ static void end_game(int won)
     }
     
     int counter = 0;
-    while(counter < COUNT_ITERATIONS*2) {
+    while(counter < COUNT_ITERATIONS) {
         pacer_wait ();
         tinygl_update ();
         counter++;
@@ -172,6 +187,8 @@ static bool restart(void)
         if (opponent_answer != '?' && answered) {
             break;
         }
+        
+        ///dasfdasfdsafhdaskjf;dlasfkjd;asflkjdas;f
     }
     return player_restarting && opponent_answer == 'y'; // True if both players want to restart.
 }
@@ -189,9 +206,9 @@ int main (void)
     while (keep_playing) {
         ready_up();
         //led_countdown();
-        begin_game(playerNumber);
+        begin_game(player_number);
         //end_game(1);
-        keep_playing = restart();
+        //keep_playing = restart();
     }
     tinygl_clear();
     tinygl_update();

@@ -9,6 +9,7 @@ CFLAGS = -mmcu=atmega32u2 -Os -Wall -Wstrict-prototypes -Wextra -g -I. -I../../u
 OBJCOPY = avr-objcopy
 SIZE = avr-size
 DEL = rm
+OBJDIR = obj
 
 
 # Default target.
@@ -16,6 +17,8 @@ all: startup.out
 
 
 # Compile: create object files from C source files.
+
+# Team 426 created files.
 startup.o: startup.c ../../drivers/avr/ir_uart.h ../../drivers/avr/system.h ../../drivers/display.h ../../drivers/navswitch.h ../../fonts/font5x7_1.h ../../utils/font.h ../../utils/pacer.h ../../utils/tinygl.h game.h
 	$(CC) -c $(CFLAGS) $< -o $@
 
@@ -30,7 +33,8 @@ snake.o: snake.c ../../drivers/avr/system.h ../../utils/tinygl.h snake.h
 
 communications.o: communications.c ../../drivers/avr/system.h ../../drivers/avr/timer.h ../../drivers/avr/ir_uart.c ../../utils/tinygl.h communications.h
 	$(CC) -c $(CFLAGS) $< -o $@
-
+	
+# Supplied files.
 ir_uart.o: ../../drivers/avr/ir_uart.c ../../drivers/avr/ir_uart.h ../../drivers/avr/pio.h ../../drivers/avr/system.h ../../drivers/avr/timer0.h ../../drivers/avr/usart1.h
 	$(CC) -c $(CFLAGS) $< -o $@
 
@@ -74,7 +78,8 @@ tinygl.o: ../../utils/tinygl.c ../../drivers/avr/system.h ../../drivers/display.
 	$(CC) -c $(CFLAGS) $< -o $@
 
 
-
+$(OBJDIR)/%.o: %.c
+	$(CC) $(CFLAGS) $(CPPFLAGS) -c -o $@ $<
 
 
 # Link: create ELF output file from object files.
