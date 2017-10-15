@@ -36,11 +36,13 @@ static void tinygl_startup(void)
     tinygl_text_mode_set (TINYGL_TEXT_MODE_SCROLL);
 }
 
+
 /** Sets the text to "wait" */
 static void tinygl_ready_text(void)
 {
     tinygl_text(" WAIT");
 }
+
 
 /** Displays a message counting down from 3    */
 static void led_countdown(void)
@@ -55,6 +57,7 @@ static void led_countdown(void)
         counter++;
     }
 }
+
 
 /** Waits for both players to push the navswitch. */
 static void ready_up(void)
@@ -85,13 +88,6 @@ static void ready_up(void)
     }
 }
 
-void display_character (char character)
-{
-    char buffer[2];
-    buffer[0] = character;
-    buffer[1] = '\0';
-    tinygl_text (buffer);
-}
 
 /** Shows the players if they won, lost or drew the game.
  *  @param won values stand for 0 = lost, 1 = winner, 2 = draw. */
@@ -115,6 +111,7 @@ static void end_game(int won)
     }
 }
 
+
 static void send_restarting_choice(bool player_restarting)
 {
     if (player_restarting) {
@@ -123,6 +120,7 @@ static void send_restarting_choice(bool player_restarting)
         ir_uart_putc('n');
     }
 }
+
 
 static char receive_restarting_choice(void)
 {
@@ -135,6 +133,10 @@ static char receive_restarting_choice(void)
     }
 }
 
+/** Checks if both users want to restart the game by them pushing
+ *  the navswitch on either "yes" or "no".
+ *  @return true if both players want to restart, false otherwise.
+ */
 static bool restart(void)
 {
     bool player_restarting = true;
@@ -142,7 +144,6 @@ static bool restart(void)
     bool answered = true;
     tinygl_clear();
     tinygl_text("PLAY AGAIN?");
-    
     
     while(1) {
         pacer_wait ();
@@ -172,7 +173,6 @@ static bool restart(void)
     }
     return player_restarting && opponent_answer == 'y';
 }
-
 
 
 int main (void)
