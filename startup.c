@@ -20,8 +20,6 @@
 #define COUNT_ITERATIONS 6000
 #define SENDING_NUMBER 191
 
-static int playerReady = 0; 
-static int opponentReady = 0;
 static int playerNumber = 0;
 
 /** Initilizes tinygl and sets the message to scroll and
@@ -58,12 +56,17 @@ static void led_countdown(void)
 }
 
 
-/** Waits for both players to push the navswitch. */
+/** Waits for both players to push the navswitch, then exits the loop.
+ */
 static void ready_up(void)
 {
+    tinygl_clear();
+    tinygl_text("  READY UP!");
+    int playerReady = 0; 
+    int opponentReady = 0;
+
     while(playerReady == 0 || opponentReady == 0)
     {
-        tinygl_text("  READY UP!");
         pacer_wait ();
         tinygl_update ();
         navswitch_update();
@@ -162,7 +165,6 @@ static bool restart(void)
         }
         if (navswitch_push_event_p (NAVSWITCH_PUSH) && answered) {
             send_restarting_choice(player_restarting);
-            //return restarting;
         }
         if (ir_uart_read_ready_p()) {
             opponent_answer = receive_restarting_choice();
@@ -171,7 +173,7 @@ static bool restart(void)
             break;
         }
     }
-    return player_restarting && opponent_answer == 'y';
+    return player_restarting && opponent_answer == 'y'; // True if both players want to restart.
 }
 
 
