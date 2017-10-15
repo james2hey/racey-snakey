@@ -32,7 +32,6 @@ static void tinygl_startup(void)
     tinygl_font_set (&font5x7_1);
     tinygl_text_speed_set (MESSAGE_RATE);
     tinygl_text_mode_set(TINYGL_TEXT_DIR_ROTATE);
-    tinygl_text("  READY UP!");
     tinygl_text_mode_set (TINYGL_TEXT_MODE_SCROLL);
 }
 
@@ -64,6 +63,7 @@ static void ready_up(void)
 {
     while(playerReady == 0 || opponentReady == 0)
     {
+        tinygl_text("  READY UP!");
         pacer_wait ();
         tinygl_update ();
         navswitch_update();
@@ -143,7 +143,7 @@ static bool restart(void)
     char opponent_answer = '?';
     bool answered = true;
     tinygl_clear();
-    tinygl_text("PLAY AGAIN?");
+    tinygl_text(" PLAY AGAIN?");
     
     while(1) {
         pacer_wait ();
