@@ -12,8 +12,7 @@
 #include "timer.h"
 #include "game.h" 
 #include "stdbool.h"
-//#include "end.h"
-//j
+
 
 #define PACER_RATE 1000
 #define LOOP_RATE 1000
@@ -116,13 +115,34 @@ static void end_game(int won)
     }
 }
 
+static void send_restarting_choice(bool player_restarting)
+{
+    if (player_restarting) {
+        ir_uart_putc('y');
+    } else {
+        ir_uart_putc('n');
+    }
+}
+
+static char receive_restarting_choice(void)
+{
+    if (ir_uart_getc() == 'y') { // Yes
+        return 'y';
+    } else if (ir_uart_getc() == 'n') { // No
+        return 'n';
+    } else {
+        return 'u'; // Undecided
+    }
+}
 
 static bool restart(void)
 {
-    bool restarting = true;
+    bool player_restarting = true;
+    char opponent_answer = '?';
     bool answered = true;
     tinygl_clear();
     tinygl_text("PLAY AGAIN?");
+    
     
     while(1) {
         pacer_wait ();
@@ -131,20 +151,28 @@ static bool restart(void)
         
         if (navswitch_push_event_p (NAVSWITCH_NORTH)) {
             tinygl_text(" YES");
-            restarting = true;
+            player_restarting = true;
             answered = true;
         }
         if (navswitch_push_event_p (NAVSWITCH_SOUTH)) {
             tinygl_text(" NO");
-            restarting = false;
+            player_restarting = false;
             answered = true;
         }
         if (navswitch_push_event_p (NAVSWITCH_PUSH) && answered) {
-            return restarting;
+            send_restarting_choice(player_restarting);
+            //return restarting;
+        }
+        if (ir_uart_read_ready_p()) {
+            opponent_answer = receive_restarting_choice();
+        }
+        if (opponent_answer != '?' && answered) {
+            break;
         }
     }
-    
+    return player_restarting && opponent_answer == 'y';
 }
+
 
 
 int main (void)
@@ -159,21 +187,14 @@ int main (void)
     while (keep_playing) {
         ready_up();
         led_countdown();
-        begin_game(playerNumber);
+        //begin_game(playerNumber);
         end_game(1);
         keep_playing = restart();
     }
     tinygl_clear();
     tinygl_update();
     
-    while(1) {
-        
-        if (ir_uart_read_ready_p()) {
-            char character = ir_uart_getc();
-            display_character(character);
-            tinygl_update();
-        }
-    }
+
     return 0;
 }
 
