@@ -157,14 +157,12 @@ static void update_task(void* data)
         snake_move(&game_data->snake1);
         snake_move(&game_data->snake2);
         
-        if (snake_collision(&game_data->snake1, &game_data->snake1)) {
+        if (snake_collision(&game_data->snake1, &game_data->snake1) ||
+            snake_collision(&game_data->snake1, &game_data->snake2) ||
+            collision(&game_data->snake1, game_data->snake2.tail[0])) {
             game_data->snake1.alive = false;
         }
-    
-        if (snake_collision(&game_data->snake1, &game_data->snake2)) {
-            game_data->snake1.alive = false;
-        }
-
+        
         if (collision(&game_data->snake1, game_data->food)) {
             snake_eat(&game_data->snake1);
             game_data->food = new_food(game_data->snake1.cur_length, game_data->snake1.tail);
@@ -180,7 +178,7 @@ static void update_task(void* data)
             snake_move(&game_data->snake2);
         }
         
-        if (game_data->snake1.cur_length == 0 && game_data->snake2.cur_length == 0) {
+        if (game_data->snake1.cur_length == 0 || game_data->snake2.cur_length == 0) {
             //tie
             return;
         } else if(game_data->snake1.cur_length == 0) {
