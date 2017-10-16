@@ -39,7 +39,7 @@ static void display_task(void* data)
     snake_draw(&game_data->snake1);
     snake_draw(&game_data->snake2);
     
-    if (game_data->running) {
+    if (game_data->snake1.alive && game_data->snake2.alive) {
         tinygl_draw_point(game_data->food, 1);
     }
     
@@ -70,7 +70,7 @@ static void control_task(void* data)
 {
     game_data_t* game_data = data;
     
-    if (game_data->running) { 
+    if (game_data->snake1.alive) { 
         tinygl_clear();
         tinygl_update();
         navswitch_update();
@@ -194,7 +194,6 @@ void begin_game(uint8_t player_n)
     
     game_data.food.x = 2;
     game_data.food.y = 3;
-    game_data.running = true;
     
     task_t tasks[] = {
         {.func = display_task, .period = TASK_RATE / DISPLAY_TASK_RATE, .data = &game_data},
