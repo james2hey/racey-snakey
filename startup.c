@@ -8,7 +8,7 @@
 #include "navswitch.h"
 #include "ir_uart.h"
 #include "tinygl.h"
-#include "../fonts/font5x7_1.h"
+#include "../fonts/font3x5_1.h"
 #include "timer.h"
 #include "game.h" 
 #include "stdbool.h"
@@ -16,7 +16,7 @@
 
 #define PACER_RATE 1000
 #define LOOP_RATE 1000
-#define MESSAGE_RATE 16
+#define MESSAGE_RATE 20
 #define COUNT_ITERATIONS 6000
 #define SENDING_NUMBER 191
 
@@ -28,10 +28,11 @@ static int player_number = 0;
 static void tinygl_startup(void)
 {
     tinygl_init (LOOP_RATE);
-    tinygl_font_set (&font5x7_1);
+    tinygl_font_set (&font3x5_1);
     tinygl_text_speed_set (MESSAGE_RATE);
-    tinygl_text_mode_set(TINYGL_TEXT_DIR_ROTATE);
+    
     tinygl_text_mode_set (TINYGL_TEXT_MODE_SCROLL);
+    tinygl_text_dir_set(TINYGL_TEXT_DIR_ROTATE);
 }
 
 /** Retransmits the given character after 6000 calls.
@@ -48,7 +49,7 @@ static void retransmit(char character) {
 /** Sets the text to "wait" */
 static void tinygl_ready_text(void)
 {
-    tinygl_text(" WAIT");
+    tinygl_text("  WAITING ON SECOND PLAYER");
 }
 
 
@@ -72,7 +73,7 @@ static void led_countdown(void)
 static void ready_up(void)
 {
     tinygl_clear();
-    tinygl_text("  READY UP!");
+    tinygl_text("  CLICK TO READY UP!");
     int playerReady = 0; 
     int opponentReady = 0;
     bool pushed = false;
