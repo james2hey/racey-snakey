@@ -161,10 +161,17 @@ static void update_task(void* data)
     if (snake_collision(&game_data->snake1, &game_data->snake1)) {
         game_data->running = false;
     }
+    
+    if (snake_collision(&game_data->snake1, &game_data->snake2)) {
+        game_data->running = false;
+    }
 
     if (collision(&game_data->snake1, game_data->food)) {
         snake_eat(&game_data->snake1);
         game_data->food = new_food(game_data->snake1.cur_length, game_data->snake1.tail);
+        send_coord(game_data->food);
+    } else if (collision(&game_data->snake2, game_data->food)) {
+        game_data->food = receive_coord();
     }
 }
 
