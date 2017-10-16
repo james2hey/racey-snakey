@@ -9,7 +9,7 @@
 /** Define frequency of tasks*/
 #define DISPLAY_TASK_RATE 1400
 #define CONTROL_TASK_RATE 70
-#define UPDATE_TASK_RATE 3
+#define UPDATE_TASK_RATE 1
 
 /** Define the starting position of the snakes */
 #define SNAKE1_X 0
@@ -26,7 +26,6 @@ typedef struct game_data_s {
     snake_t snake2;
     tinygl_point_t food;
     uint8_t player_num;
-    bool running;
 } game_data_t;
 
 /** Draw the snakes and food onto the LED matrix 
@@ -135,6 +134,12 @@ static void send_snake(void* data, uint8_t sender)
     } else {
         game_data->snake2.length = receive_val();
     }
+    
+    if (game_data->player_num == sender) {
+        send_val(game_data->snake1.alive);
+    } else {
+        game_data->snake2.alive = receive_val();
+    }
 }
 
 /** Updates the game state by moving the snakes, checking if
@@ -148,22 +153,20 @@ static void update_task(void* data)
     send_snake(data, 1);
     send_snake(data, 2);
           
-    if (game_data->running) {
+    if (game_data->snake1.cur_length > 0 && game_data->snake2.cur_length > 0) {
         snake_move(&game_data->snake1);
         snake_move(&game_data->snake2);
-    } else if (game_data->snake1.cur_length > 0) {
-        game_data->snake1.cur_length--;
     } else {
         //end the game blah i dont know how to do this
         return;
     }
 
     if (snake_collision(&game_data->snake1, &game_data->snake1)) {
-        game_data->running = false;
+        game_data->snake1.alive = false;
     }
     
     if (snake_collision(&game_data->snake1, &game_data->snake2)) {
-        game_data->running = false;
+        game_data->snake1.alive = false;
     }
 
     if (collision(&game_data->snake1, game_data->food)) {

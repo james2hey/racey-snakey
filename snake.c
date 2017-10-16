@@ -21,6 +21,7 @@ snake_t create_snake(uint8_t x, uint8_t y, uint8_t length, uint8_t dir)
     new_snake.dir = dir;
     new_snake.tail[0].x = x;
     new_snake.tail[0].y = y;
+    new_snake.alive = true;
     return new_snake;
 }
 
@@ -75,17 +76,21 @@ tinygl_point_t new_head_posn(uint8_t dir, snake_t* snake)
 */
 void snake_move(snake_t* snake)
 {
-    if (snake->cur_length < snake->length) {
-        snake->cur_length++;
-    }
+    if (snake->alive) { 
+        if (snake->cur_length < snake->length) {
+            snake->cur_length++;
+        }
     
-    uint8_t i = 0;
-    for (i = snake->cur_length - 1; i > 0; i--) {
-        snake->tail[i].x = snake->tail[i - 1].x;
-        snake->tail[i].y = snake->tail[i - 1].y;
-    }
+        uint8_t i = 0;
+        for (i = snake->cur_length - 1; i > 0; i--) {
+            snake->tail[i].x = snake->tail[i - 1].x;
+            snake->tail[i].y = snake->tail[i - 1].y;
+        }
     
-    snake->tail[0] = new_head_posn(snake->dir, snake);
+        snake->tail[0] = new_head_posn(snake->dir, snake);
+    } else if (snake->cur_length > 0) {
+        snake->cur_length--;
+    }
 }
 
 /** Draws the given snake onto the LED matrix

@@ -23,6 +23,7 @@ typedef struct snake_s {
     uint8_t cur_length;
     uint8_t length;
     uint8_t dir;
+    bool alive;
     tinygl_point_t tail[MAX_SNAKE_LENGTH];
 } snake_t;
 
