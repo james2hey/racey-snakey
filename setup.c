@@ -96,7 +96,7 @@ static void ready_up(void)
             
             ir_uart_putc('z');
             tinygl_wait_text();
-            break;
+            //break;
         }
         if (ir_uart_read_ready_p()) {
             if (ir_uart_getc() == 'z') {
