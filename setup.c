@@ -191,7 +191,7 @@ static bool restart(void)
             opponent_answer = receive_restarting_choice();
         }
     }
-    return player_answer && opponent_answer == 'y'; // True if both players want to restart.
+    return player_answer == 'y' && opponent_answer == 'y'; // True if both players want to restart.
 }
 
 /*
