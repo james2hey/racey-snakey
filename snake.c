@@ -13,7 +13,7 @@
  *  @param dir the snakes initial direction of motion
  *  @return the snake structure
 */
-snake_t create_snake(uint8_t x, uint8_t y, uint8_t length, uint8_t dir)
+snake_t create_snake(uint8_t x, uint8_t y, uint8_t length, uint8_t dir, uint8_t colour)
 {
     snake_t new_snake;
     new_snake.cur_length = 1;
@@ -21,6 +21,7 @@ snake_t create_snake(uint8_t x, uint8_t y, uint8_t length, uint8_t dir)
     new_snake.dir = dir;
     new_snake.tail[0].x = x;
     new_snake.tail[0].y = y;
+    new_snake.colour = colour;
     new_snake.alive = true;
     return new_snake;
 }
@@ -98,10 +99,16 @@ void snake_move(snake_t* snake)
 */
 void snake_draw(snake_t* snake)
 {
-    uint8_t i = 0;
-    for (i = 0; i < snake->cur_length; i++) {
-        tinygl_draw_point(snake->tail[i], 1);
+    static uint8_t colour_tick = 0;
+    
+    if (colour_tick % snake->colour < 1) {  
+        uint8_t i = 0;
+        for (i = 0; i < snake->cur_length; i++) {
+            tinygl_draw_point(snake->tail[i], 1);
+        }
     }
+    
+    colour_tick = (colour_tick + 1) % SNAKE_COLOUR_STEPS;
 }
 
 /** Detects if the snake's head has collided with the given point

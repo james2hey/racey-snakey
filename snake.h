@@ -13,6 +13,8 @@
 /** The maximum length of a snake */
 #define MAX_SNAKE_LENGTH 8
 
+#define SNAKE_COLOUR_STEPS 19
+
 /** Defines constants for the directions of the snakes movement */
 enum directions {UP, RIGHT, DOWN, LEFT};
 
@@ -23,6 +25,7 @@ typedef struct snake_s {
     uint8_t cur_length;
     uint8_t length;
     uint8_t dir;
+    uint8_t colour;
     bool alive;
     tinygl_point_t tail[MAX_SNAKE_LENGTH];
 } snake_t;
@@ -34,7 +37,7 @@ typedef struct snake_s {
  *  @param dir the snakes initial direction of motion
  *  @return the snake structure
 */
-snake_t create_snake(uint8_t x, uint8_t y, uint8_t length, uint8_t dir);
+snake_t create_snake(uint8_t x, uint8_t y, uint8_t length, uint8_t dir, uint8_t colour);
 
 /** Function to be called when a snake eats food. This increases\
  *  the snake's length up to the maximum length

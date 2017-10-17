@@ -7,7 +7,7 @@
 #include "game.h"
 
 /** Define frequency of tasks*/
-#define DISPLAY_TASK_RATE 1400
+#define DISPLAY_TASK_RATE 5000
 #define CONTROL_TASK_RATE 70
 #define UPDATE_TASK_RATE 1
 
@@ -19,6 +19,10 @@
 #define SNAKE2_Y 0
 #define SNAKE2_DIR DOWN
 #define SNAKE_LENGTH 2
+
+/**Define the snake colours (the higher the number, the dimmer the colour)*/
+#define PLAYER_SNAKE_COL 1
+#define OPP_SNAKE_COL 8
 
 /**Structure to hold game data*/
 typedef struct game_data_s {
@@ -199,11 +203,11 @@ void begin_game(uint8_t player_n)
     game_data.player_num = player_n;
     
     if (game_data.player_num == 1) {
-        game_data.snake1 = create_snake(SNAKE1_X, SNAKE1_Y, SNAKE_LENGTH, SNAKE1_DIR);
-        game_data.snake2 = create_snake(SNAKE2_X, SNAKE2_Y, SNAKE_LENGTH, SNAKE2_DIR);
+        game_data.snake1 = create_snake(SNAKE1_X, SNAKE1_Y, SNAKE_LENGTH, SNAKE1_DIR, PLAYER_SNAKE_COL);
+        game_data.snake2 = create_snake(SNAKE2_X, SNAKE2_Y, SNAKE_LENGTH, SNAKE2_DIR, OPP_SNAKE_COL);
     } else {
-        game_data.snake1 = create_snake(SNAKE2_X, SNAKE2_Y, SNAKE_LENGTH, SNAKE2_DIR);
-        game_data.snake2 = create_snake(SNAKE1_X, SNAKE1_Y, SNAKE_LENGTH, SNAKE1_DIR);
+        game_data.snake1 = create_snake(SNAKE2_X, SNAKE2_Y, SNAKE_LENGTH, SNAKE2_DIR, PLAYER_SNAKE_COL);
+        game_data.snake2 = create_snake(SNAKE1_X, SNAKE1_Y, SNAKE_LENGTH, SNAKE1_DIR, OPP_SNAKE_COL);
     }
     
     game_data.food.x = 2;
