@@ -260,21 +260,25 @@ static int mirror_difficulty(void)
         navswitch_update();
         if (ir_uart_read_ready_p()) {
             if (ir_uart_getc() == 'a') {
+                tinygl_text_mode_set (TINYGL_TEXT_MODE_STEP);
                 difficulty = 10;
                 itoa(difficulty, text, 10);
                 tinygl_text(text);
                 
             } else if (ir_uart_getc() == 'b') {
+                tinygl_text_mode_set (TINYGL_TEXT_MODE_STEP);
                 difficulty = 20;
                 itoa(difficulty, text, 10);
                 tinygl_text(text);
                 
             } else if (ir_uart_getc() == 'c') {
+                tinygl_text_mode_set (TINYGL_TEXT_MODE_STEP);
                 difficulty = 30;
                 itoa(difficulty, text, 10);
                 tinygl_text(text);
             }
             if (ir_uart_getc() == 'q') {
+                tinygl_text_mode_set (TINYGL_TEXT_MODE_SCROLL);
                 break;
             }
         }
