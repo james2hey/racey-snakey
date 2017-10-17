@@ -193,6 +193,7 @@ static bool restart(void)
     return player_restarting && opponent_answer == 'y'; // True if both players want to restart.
 }
 
+/*
 static void send_difficulty(int difficulty, bool pushed)
 {
     if (difficulty == 10) {
@@ -214,7 +215,7 @@ static int choose_difficulty(void)
     tinygl_text("  CHOOSE DIFFICULTY");
     
     int difficulty = 0;
-    char text[1];
+    char text[3];
     bool pushed = false;
     
     while (1) {
@@ -252,7 +253,7 @@ static int mirror_difficulty(void)
     tinygl_text("  CHOOSE DIFFICULTY");
     
     int difficulty = 0;
-    char text[1];
+    char text[3];
     
     while (1) {
         pacer_wait ();
@@ -284,7 +285,7 @@ static int mirror_difficulty(void)
         }
     }
     return difficulty;
-}
+}*/
 
 /** The programs main loop. This is where the game is initilized,
  *  and controlled for displaying various messages. It also includes
@@ -298,17 +299,17 @@ int main (void)
     navswitch_init();
     ir_uart_init();
     
-    int difficulty;
+    //int difficulty;
     
     bool keep_playing = true;
     while (keep_playing) {
         ready_up();
-        if (player_number == 1) {
+        /*if (player_number == 1) {
             difficulty = choose_difficulty();
         } else {
             difficulty = mirror_difficulty();
         }
-        difficulty += 1;
+        */
         //led_countdown();
         //begin_game(player_number);
         //end_game(1);
