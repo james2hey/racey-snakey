@@ -7,7 +7,7 @@
 #include "game.h"
 
 /** Define frequency of tasks*/
-#define DISPLAY_TASK_RATE 5000
+#define DISPLAY_TASK_RATE 2000
 #define CONTROL_TASK_RATE 70
 #define UPDATE_TASK_RATE 1
 
@@ -22,7 +22,7 @@
 
 /**Define the snake colours (the higher the number, the dimmer the colour)*/
 #define PLAYER_SNAKE_COL 1
-#define OPP_SNAKE_COL 8
+#define OPP_SNAKE_COL 5
 
 /**Structure to hold game data*/
 typedef struct game_data_s {
