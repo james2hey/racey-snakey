@@ -4,7 +4,7 @@
     @brief  Simple task scheduler.
 */
 #include "system.h"
-#include "task.h"
+#include "mod_task.h"
 #include "timer.h"
 
 
@@ -86,5 +86,5 @@ uint8_t task_schedule (task_t *tasks, uint8_t num_tasks)
         }
     }
     
-    return return_val;
+    return to_return;
 }
