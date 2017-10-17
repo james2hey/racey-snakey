@@ -145,9 +145,10 @@ static void send_restarting_choice(char player_answer)
 
 static char receive_restarting_choice(void)
 {
-    if (ir_uart_getc() == 'y') { // Yes
+    char choice = ir_uart_getc();
+    if (choice == 'y') { // Yes
         return 'y';
-    } else if (ir_uart_getc() == 'n') { // No
+    } else if (choice == 'n') { // No
         return 'n';
     } else {
         return '?'; // Undecided
@@ -186,7 +187,7 @@ static bool restart(void)
             answered = true;
             tinygl_wait_text();
         }
-        if (ir_uart_read_ready_p()) {
+        if (ir_uart_read_ready_p() && ir_uart_write_finished_p()) {
             opponent_answer = receive_restarting_choice();
         }
     }
