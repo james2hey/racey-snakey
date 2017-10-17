@@ -95,7 +95,7 @@ static void ready_up(void)
             playerReady = 1;
             ir_uart_putc('z');
             tinygl_wait_text();
-            //break;
+            break;
         }
         if (ir_uart_read_ready_p()) {
             if (ir_uart_getc() == 'z') {
@@ -124,7 +124,7 @@ static void end_game(int won)
     }
     
     int counter = 0;
-    while(counter < COUNT_ITERATIONS) {
+    while(counter < COUNT_ITERATIONS*2) {
         pacer_wait ();
         tinygl_update ();
         counter++;
@@ -313,7 +313,7 @@ int main (void)
         //led_countdown();
         //begin_game(player_number);
         //end_game(1);
-        //keep_playing = restart();
+        keep_playing = restart();
     }
     
     tinygl_clear();
