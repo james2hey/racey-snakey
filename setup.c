@@ -193,6 +193,20 @@ static bool restart(void)
     return player_restarting && opponent_answer == 'y'; // True if both players want to restart.
 }
 
+static void send_difficulty(int difficulty, bool pushed)
+{
+    if (difficulty == 10) {
+        ir_uart_putc('a');
+    } else if (difficulty == 20) {
+        ir_uart_putc('b');
+    } else if (difficulty == 30) {
+        ir_uart_putc('c');
+    }
+    if (pushed) {
+        ir_uart_putc('q'); // Terminating character.
+    }
+}
+
 
 static int choose_difficulty(void)
 {
@@ -201,7 +215,7 @@ static int choose_difficulty(void)
     
     int difficulty = 0;
     char text[1];
-    //char text[];
+    bool pushed = false;
     
     while (1) {
         pacer_wait ();
@@ -224,17 +238,48 @@ static int choose_difficulty(void)
         
         if (navswitch_push_event_p (NAVSWITCH_PUSH) && difficulty != 0) {
             tinygl_text_mode_set (TINYGL_TEXT_MODE_SCROLL);
+            pushed = true;
             break;
         }
+        send_difficulty(difficulty, pushed);
     }
     return difficulty;
 }
 
 static int mirror_difficulty(void)
 {
-    //if (ir_uart_getc() == '10') {
-         
-    return 1;
+    tinygl_clear();
+    tinygl_text("  CHOOSE DIFFICULTY");
+    
+    int difficulty = 0;
+    char text[1];
+    
+    while (1) {
+        pacer_wait ();
+        tinygl_update ();
+        navswitch_update();
+        if (ir_uart_read_ready_p()) {
+            if (ir_uart_getc() == 'a') {
+                difficulty = 10;
+                itoa(difficulty, text, 10);
+                tinygl_text(text);
+                
+            } else if (ir_uart_getc() == 'b') {
+                difficulty = 20;
+                itoa(difficulty, text, 10);
+                tinygl_text(text);
+                
+            } else if (ir_uart_getc() == 'c') {
+                difficulty = 30;
+                itoa(difficulty, text, 10);
+                tinygl_text(text);
+            }
+            if (ir_uart_getc() == 'q') {
+                break;
+            }
+        }
+    }
+    return difficulty;
 }
 
 /** The programs main loop. This is where the game is initilized,
@@ -253,12 +298,13 @@ int main (void)
     
     bool keep_playing = true;
     while (keep_playing) {
-        ready_up();/*
+        ready_up();
         if (player_number == 1) {
             difficulty = choose_difficulty();
         } else {
             difficulty = mirror_difficulty();
-        }*/
+        }
+        difficulty += 1;
         //led_countdown();
         begin_game(player_number);
         //end_game(1);
