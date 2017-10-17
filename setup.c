@@ -149,9 +149,9 @@ static char receive_restarting_choice(void)
         return 'y';
     } else if (ir_uart_getc() == 'n') { // No
         return 'n';
-    } //else {
-        //return '?'; // Undecided
-    //}
+    } else {
+        return '?'; // Undecided
+    }
 }
 
 /** Checks if both users want to restart the game by them pushing
@@ -188,9 +188,6 @@ static bool restart(void)
         }
         if (ir_uart_read_ready_p()) {
             opponent_answer = receive_restarting_choice();
-        }
-        if (player_answer != '?' && opponent_answer != '?') {
-            break;
         }
     }
     return player_answer && opponent_answer == 'y'; // True if both players want to restart.
