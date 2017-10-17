@@ -96,7 +96,7 @@ static void ready_up(void)
             
             ir_uart_putc('z');
             tinygl_wait_text();
-            //break;
+            break;
         }
         if (ir_uart_read_ready_p()) {
             if (ir_uart_getc() == 'z') {
@@ -165,8 +165,48 @@ static bool restart(void)
     tinygl_clear();
     tinygl_text(" PLAY AGAIN?");
     
-    bool player_answer = '?';
-    char opponent_answer = '?';
+    char player_answer = '?';
+    bool answered = false;
+    
+    while(!answered) {
+        pacer_wait ();
+        tinygl_update ();
+        navswitch_update ();
+        
+        if (player_number == 1) {
+            if (navswitch_push_event_p (NAVSWITCH_NORTH)) {
+                tinygl_text(" YES");
+                player_answer = 'y';
+                ir_uart_putc('y');
+            }
+            if (navswitch_push_event_p (NAVSWITCH_SOUTH)) {
+                tinygl_text(" NO");
+                player_answer = 'n';
+                ir_uart_putc('n');
+            }
+            if (navswitch_push_event_p (NAVSWITCH_PUSH)) {
+                send_restarting_choice(player_answer);
+                ir_uart_putc('b');
+                answered = true;
+            }
+        } else {
+            if (ir_uart_read_ready_p()) {
+                char choice = ir_uart_getc();
+                if (choice == 'y') {
+                    player_answer = 'y';
+                    tinygl_text(" YES");
+                } else if (choice == 'n') {
+                    player_answer = 'n';
+                    tinygl_text(" NO");
+                } else if (choice == 'b') {
+                    answered = true;
+                }
+            }
+        }
+    }
+    return player_answer == 'y';
+}
+    /*char opponent_answer = '?'; 
     bool answered = false;
     
     while(player_answer == '?' || opponent_answer == '?') {
@@ -191,8 +231,7 @@ static bool restart(void)
             opponent_answer = receive_restarting_choice();
         }
     }
-    return player_answer == 'y' && opponent_answer == 'y'; // True if both players want to restart.
-}
+    return player_answer == 'y' && opponent_answer == 'y'; // True if both players want to restart.*/
 
 /*
 static void send_difficulty(int difficulty, bool pushed)
