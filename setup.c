@@ -155,24 +155,24 @@ static char receive_restarting_choice(void)
     }
 }
 
-/** Checks if both users want to restart the game by them pushing
- *  the navswitch on either "yes" or "no".
+/** Checks if player 1 wants to restart the game by them pushing
+ *  the navswitch on either "yes" or "no". This is displayed on
+ *  both players screens.
  *  @return true if both players want to restart, false otherwise.
  */
 static bool restart(void)
 {
-    
     tinygl_clear();
     tinygl_text(" PLAY AGAIN?");
     
     char player_answer = '?';
     bool answered = false;
-    
+
     while(!answered) {
         pacer_wait ();
         tinygl_update ();
         navswitch_update ();
-        
+
         if (player_number == 1) {
             if (navswitch_push_event_p (NAVSWITCH_NORTH)) {
                 tinygl_text(" YES");
@@ -206,126 +206,22 @@ static bool restart(void)
     }
     return player_answer == 'y';
 }
-    /*char opponent_answer = '?'; 
-    bool answered = false;
-    
-    while(player_answer == '?' || opponent_answer == '?') {
-        pacer_wait ();
-        tinygl_update ();
-        navswitch_update();
-        
-        if (navswitch_push_event_p (NAVSWITCH_NORTH) && !answered) {
-            tinygl_text(" YES");
-            player_answer = 'y';
-        }
-        if (navswitch_push_event_p (NAVSWITCH_SOUTH) && !answered) {
-            tinygl_text(" NO");
-            player_answer = 'n';
-        }
-        if (navswitch_push_event_p (NAVSWITCH_PUSH) && player_answer != '?') {
-            send_restarting_choice(player_answer);
-            answered = true;
-            tinygl_wait_text();
-        }
-        if (ir_uart_read_ready_p() && ir_uart_write_finished_p()) {
-            opponent_answer = receive_restarting_choice();
-        }
-    }
-    return player_answer == 'y' && opponent_answer == 'y'; // True if both players want to restart.*/
 
-/*
-static void send_difficulty(int difficulty, bool pushed)
-{
-    if (difficulty == 10) {
-        ir_uart_putc('a');
-    } else if (difficulty == 20) {
-        ir_uart_putc('b');
-    } else if (difficulty == 30) {
-        ir_uart_putc('c');
-    }
-    if (pushed) {
-        ir_uart_putc('q'); // Terminating character.
-    }
-}
-
-
-static int choose_difficulty(void)
+static void terminate()
 {
     tinygl_clear();
-    tinygl_text("  CHOOSE DIFFICULTY");
-    
-    int difficulty = 0;
-    char text[3];
-    bool pushed = false;
-    
-    while (1) {
+    tinygl_update();
+    tinygl_text( " GOODBYE!");
+    int counter = 0;
+    while (counter < COUNT_ITERATIONS) {
         pacer_wait ();
         tinygl_update ();
-        navswitch_update();
-        
-        if (navswitch_push_event_p (NAVSWITCH_NORTH) && difficulty < 30) {
-            tinygl_text_mode_set (TINYGL_TEXT_MODE_STEP);
-            difficulty += 10;
-            itoa(difficulty, text, 10);
-            tinygl_text(text);
-        }
-        
-        if (navswitch_push_event_p (NAVSWITCH_SOUTH) && difficulty > 10) {
-            tinygl_text_mode_set (TINYGL_TEXT_MODE_STEP);
-            difficulty -= 10;
-            itoa(difficulty, text, 10);
-            tinygl_text(text);
-        }
-        
-        if (navswitch_push_event_p (NAVSWITCH_PUSH) && difficulty != 0) {
-            tinygl_text_mode_set (TINYGL_TEXT_MODE_SCROLL);
-            pushed = true;
-            break;
-        }
-        send_difficulty(difficulty, pushed);
+        counter++;
     }
-    return difficulty;
-}
-
-static int mirror_difficulty(void)
-{
     tinygl_clear();
-    tinygl_text("  CHOOSE DIFFICULTY");
-    
-    int difficulty = 0;
-    char text[3];
-    
-    while (1) {
-        pacer_wait ();
-        tinygl_update ();
-        navswitch_update();
-        if (ir_uart_read_ready_p()) {
-            if (ir_uart_getc() == 'a') {
-                tinygl_text_mode_set (TINYGL_TEXT_MODE_STEP);
-                difficulty = 10;
-                itoa(difficulty, text, 10);
-                tinygl_text(text);
-                
-            } else if (ir_uart_getc() == 'b') {
-                tinygl_text_mode_set (TINYGL_TEXT_MODE_STEP);
-                difficulty = 20;
-                itoa(difficulty, text, 10);
-                tinygl_text(text);
-                
-            } else if (ir_uart_getc() == 'c') {
-                tinygl_text_mode_set (TINYGL_TEXT_MODE_STEP);
-                difficulty = 30;
-                itoa(difficulty, text, 10);
-                tinygl_text(text);
-            }
-            if (ir_uart_getc() == 'q') {
-                tinygl_text_mode_set (TINYGL_TEXT_MODE_SCROLL);
-                break;
-            }
-        }
-    }
-    return difficulty;
-}*/
+    tinygl_update();
+}
+ 
 
 /** The programs main loop. This is where the game is initilized,
  *  and controlled for displaying various messages. It also includes
@@ -339,25 +235,15 @@ int main (void)
     navswitch_init();
     ir_uart_init();
     
-    //int difficulty;
-    
     bool keep_playing = true;
+    int winner;
     while (keep_playing) {
         ready_up();
-        /*if (player_number == 1) {
-            difficulty = choose_difficulty();
-        } else {
-            difficulty = mirror_difficulty();
-        }
-        */
         //led_countdown();
-        //begin_game(player_number);
-        //end_game(0);
+        winner = begin_game(player_number);
+        end_game(winner);
         keep_playing = restart();
     }
-    
-    tinygl_clear();
-    tinygl_update();
-
+    terminate();
     return 0;
 }
