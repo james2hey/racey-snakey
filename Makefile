@@ -19,7 +19,7 @@ all: setup.out
 # Compile: create object files from C source files.
 
 # Team 426 created files.
-setup.o: setup.c ../../drivers/avr/ir_uart.h ../../drivers/avr/system.h ../../drivers/display.h ../../drivers/navswitch.h ../../fonts/font5x7_1.h ../../utils/font.h ../../utils/pacer.h ../../utils/tinygl.h game.h
+setup.o: setup.c ../../drivers/avr/ir_uart.h ../../drivers/avr/system.h ../../drivers/display.h ../../drivers/navswitch.h ../../fonts/font3x5_1.h ../../utils/font.h ../../utils/pacer.h ../../utils/tinygl.h game.h
 	$(CC) -c $(CFLAGS) $< -o $@
 
 game.o: game.c snake.h food.h communications.h ../../drivers/avr/system.h ../../utils/task.h ../../utils/tinygl.h ../../drivers/navswitch.h game.h

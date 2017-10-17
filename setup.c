@@ -1,7 +1,8 @@
 /** @file setup.c
  *  @author Gerry Toft, 53712395, and James Toohey, 27073776, team 426
  *  @date 12/10/2017
- *  @brief Waits for both users to ready up, then begins the game.
+ *  @brief Controls the flow of the game, with a continous loop 
+ *  restarting the game until a player decides to quit.
 */
 #include "system.h"
 #include "pacer.h"
@@ -17,7 +18,7 @@
 #define PACER_RATE 1000
 #define LOOP_RATE 1000
 #define MESSAGE_RATE 20
-#define COUNT_ITERATIONS 6000
+#define COUNT_ITERATIONS 5800
 #define SENDING_NUMBER 191
 
 static int amount = 0;
@@ -47,7 +48,7 @@ static void retransmit(char character) {
 }
 
 /** Sets the text to "wait" */
-static void tinygl_ready_text(void)
+static void tinygl_wait_text(void)
 {
     tinygl_text("  WAITING ON PLAYER2");
 }
@@ -93,7 +94,7 @@ static void ready_up(void)
             pushed = true;
             playerReady = 1;
             ir_uart_putc('z');
-            tinygl_ready_text();
+            tinygl_wait_text();
             //break;
         }
         if (ir_uart_read_ready_p()) {
@@ -193,6 +194,53 @@ static bool restart(void)
 }
 
 
+static int choose_difficulty(void)
+{
+    tinygl_clear();
+    tinygl_text("  CHOOSE DIFFICULTY");
+    
+    int difficulty = 0;
+    char text[1];
+    //char text[];
+    
+    while (1) {
+        pacer_wait ();
+        tinygl_update ();
+        navswitch_update();
+        
+        if (navswitch_push_event_p (NAVSWITCH_NORTH) && difficulty < 30) {
+            tinygl_text_mode_set (TINYGL_TEXT_MODE_STEP);
+            difficulty += 10;
+            itoa(difficulty, text, 10);
+            tinygl_text(text);
+        }
+        
+        if (navswitch_push_event_p (NAVSWITCH_SOUTH) && difficulty > 10) {
+            tinygl_text_mode_set (TINYGL_TEXT_MODE_STEP);
+            difficulty -= 10;
+            itoa(difficulty, text, 10);
+            tinygl_text(text);
+        }
+        
+        if (navswitch_push_event_p (NAVSWITCH_PUSH) && difficulty != 0) {
+            tinygl_text_mode_set (TINYGL_TEXT_MODE_SCROLL);
+            break;
+        }
+    }
+    return difficulty;
+}
+
+static int mirror_difficulty(void)
+{
+    //if (ir_uart_getc() == '10') {
+         
+    return 1;
+}
+
+/** The programs main loop. This is where the game is initilized,
+ *  and controlled for displaying various messages. It also includes
+ *  the games restart/termination dictated by the user.
+ */
 int main (void)
 {
     system_init ();
@@ -201,23 +249,24 @@ int main (void)
     navswitch_init();
     ir_uart_init();
     
+    int difficulty;
+    
     bool keep_playing = true;
     while (keep_playing) {
-        ready_up();
+        ready_up();/*
+        if (player_number == 1) {
+            difficulty = choose_difficulty();
+        } else {
+            difficulty = mirror_difficulty();
+        }*/
         //led_countdown();
         begin_game(player_number);
         //end_game(1);
         //keep_playing = restart();
     }
+    
     tinygl_clear();
     tinygl_update();
-    
 
     return 0;
 }
-
-
-
-
-
-
