@@ -132,9 +132,9 @@ static void end_game(int won)
 }
 
 
-static void send_restarting_choice(bool player_restarting)
+static void send_restarting_choice(char player_answer)
 {
-    if (player_restarting) {
+    if (player_answer == 'y') {
         ir_uart_putc('y');
     } else {
         ir_uart_putc('n');
@@ -148,9 +148,9 @@ static char receive_restarting_choice(void)
         return 'y';
     } else if (ir_uart_getc() == 'n') { // No
         return 'n';
-    } else {
-        return 'u'; // Undecided
-    }
+    } //else {
+        //return '?'; // Undecided
+    //}
 }
 
 /** Checks if both users want to restart the game by them pushing
@@ -159,38 +159,39 @@ static char receive_restarting_choice(void)
  */
 static bool restart(void)
 {
-    bool player_restarting = true;
+    bool player_answer = '?';
     char opponent_answer = '?';
     bool answered = true;
     tinygl_clear();
     tinygl_text(" PLAY AGAIN?");
     
-    while(1) {
+    while(player_answer == '?' || opponent_answer == '?') {
         pacer_wait ();
         tinygl_update ();
         navswitch_update();
         
         if (navswitch_push_event_p (NAVSWITCH_NORTH)) {
             tinygl_text(" YES");
-            player_restarting = true;
+            player_answer = 'y';
             answered = true;
         }
         if (navswitch_push_event_p (NAVSWITCH_SOUTH)) {
             tinygl_text(" NO");
-            player_restarting = false;
+            player_answer = 'n';
             answered = true;
         }
         if (navswitch_push_event_p (NAVSWITCH_PUSH) && answered) {
-            send_restarting_choice(player_restarting);
+            send_restarting_choice(player_answer);
+            tinygl_wait_text();
         }
         if (ir_uart_read_ready_p()) {
             opponent_answer = receive_restarting_choice();
         }
-        if (opponent_answer != '?' && answered) {
+        if (player_answer != '?' && opponent_answer != '?') {
             break;
         }
     }
-    return player_restarting && opponent_answer == 'y'; // True if both players want to restart.
+    return player_answer && opponent_answer == 'y'; // True if both players want to restart.
 }
 
 /*
