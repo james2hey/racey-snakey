@@ -310,7 +310,7 @@ int main (void)
         }
         difficulty += 1;
         //led_countdown();
-        begin_game(player_number);
+        //begin_game(player_number);
         //end_game(1);
         //keep_playing = restart();
     }
