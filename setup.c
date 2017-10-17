@@ -93,6 +93,7 @@ static void ready_up(void)
             }
             pushed = true;
             playerReady = 1;
+            
             ir_uart_putc('z');
             tinygl_wait_text();
             break;
@@ -159,29 +160,30 @@ static char receive_restarting_choice(void)
  */
 static bool restart(void)
 {
-    bool player_answer = '?';
-    char opponent_answer = '?';
-    bool answered = true;
+    
     tinygl_clear();
     tinygl_text(" PLAY AGAIN?");
+    
+    bool player_answer = '?';
+    char opponent_answer = '?';
+    bool answered = false;
     
     while(player_answer == '?' || opponent_answer == '?') {
         pacer_wait ();
         tinygl_update ();
         navswitch_update();
         
-        if (navswitch_push_event_p (NAVSWITCH_NORTH)) {
+        if (navswitch_push_event_p (NAVSWITCH_NORTH) && !answered) {
             tinygl_text(" YES");
             player_answer = 'y';
-            answered = true;
         }
-        if (navswitch_push_event_p (NAVSWITCH_SOUTH)) {
+        if (navswitch_push_event_p (NAVSWITCH_SOUTH) && !answered) {
             tinygl_text(" NO");
             player_answer = 'n';
-            answered = true;
         }
-        if (navswitch_push_event_p (NAVSWITCH_PUSH) && answered) {
+        if (navswitch_push_event_p (NAVSWITCH_PUSH) && player_answer != '?') {
             send_restarting_choice(player_answer);
+            answered = true;
             tinygl_wait_text();
         }
         if (ir_uart_read_ready_p()) {
@@ -313,7 +315,7 @@ int main (void)
         */
         //led_countdown();
         //begin_game(player_number);
-        //end_game(1);
+        //end_game(0);
         keep_playing = restart();
     }
     
