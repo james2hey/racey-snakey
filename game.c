@@ -7,7 +7,7 @@
 #include "game.h"
 
 /** Define frequency of tasks*/
-#define DISPLAY_TASK_RATE 2000
+#define DISPLAY_TASK_RATE 1200
 #define CONTROL_TASK_RATE 70
 #define UPDATE_TASK_RATE 1
 
@@ -22,7 +22,7 @@
 
 /**Define the snake colours (the higher the number, the dimmer the colour)*/
 #define PLAYER_SNAKE_COL 1
-#define OPP_SNAKE_COL 5
+#define OPP_SNAKE_COL 2
 
 /**Structure to hold game data*/
 typedef struct game_data_s {
@@ -183,21 +183,18 @@ static void update_task(void* data)
         }
         
         if (game_data->snake1.cur_length == 0 || game_data->snake2.cur_length == 0) {
-            //tie
-            return;
+            task_cancel(2);
         } else if(game_data->snake1.cur_length == 0) {
-            //p2 wins
-            return;
+            task_cancel(0);
         } else if(game_data->snake2.cur_length == 0) {
-            //p1 wins
-            return;
+            task_cancel(1);
         }
         
     }
 }
 
 /** Begins the snake game */
-void begin_game(uint8_t player_n)
+uint8_t begin_game(uint8_t player_n)
 {
     game_data_t game_data;
     game_data.player_num = player_n;
@@ -219,5 +216,5 @@ void begin_game(uint8_t player_n)
         {.func = update_task, .period = TASK_RATE / UPDATE_TASK_RATE, .data = &game_data},
     };
     
-    task_schedule(tasks, ARRAY_SIZE (tasks));
+    return task_schedule(tasks, ARRAY_SIZE (tasks));
 }

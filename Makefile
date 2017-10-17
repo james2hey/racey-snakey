@@ -22,7 +22,7 @@ all: setup.out
 setup.o: setup.c ../../drivers/avr/ir_uart.h ../../drivers/avr/system.h ../../drivers/display.h ../../drivers/navswitch.h ../../fonts/font3x5_1.h ../../utils/font.h ../../utils/pacer.h ../../utils/tinygl.h game.h
 	$(CC) -c $(CFLAGS) $< -o $@
 
-game.o: game.c snake.h food.h communications.h ../../drivers/avr/system.h ../../utils/task.h ../../utils/tinygl.h ../../drivers/navswitch.h game.h
+game.o: game.c snake.h food.h communications.h ../../drivers/avr/system.h mod_task.h ../../utils/tinygl.h ../../drivers/navswitch.h game.h
 	$(CC) -c $(CFLAGS) $< -o $@
 
 food.o: food.c ../../drivers/avr/system.h ../../utils/tinygl.h ../../drivers/avr/timer.h food.h
@@ -53,7 +53,7 @@ timer.o: ../../drivers/avr/timer.c ../../drivers/avr/system.h ../../drivers/avr/
 timer0.o: ../../drivers/avr/timer0.c ../../drivers/avr/bits.h ../../drivers/avr/prescale.h ../../drivers/avr/system.h ../../drivers/avr/timer0.h
 	$(CC) -c $(CFLAGS) $< -o $@
 
-task.o: ../../utils/task.c ../../drivers/avr/system.h ../../drivers/avr/timer.h ../../utils/task.h
+mod_task.o: mod_task.c ../../drivers/avr/system.h ../../drivers/avr/timer.h mod_task.h
 	$(CC) -c $(CFLAGS) $< -o $@
 
 usart1.o: ../../drivers/avr/usart1.c ../../drivers/avr/system.h ../../drivers/avr/usart1.h
@@ -83,7 +83,7 @@ $(OBJDIR)/%.o: %.c
 
 
 # Link: create ELF output file from object files.
-setup.out: setup.o ir_uart.o pio.o prescale.o system.o timer.o timer0.o usart1.o display.o ledmat.o navswitch.o font.o pacer.o tinygl.o task.o game.o food.o snake.o communications.o
+setup.out: setup.o ir_uart.o pio.o prescale.o system.o timer.o timer0.o usart1.o display.o ledmat.o navswitch.o font.o pacer.o tinygl.o mod_task.o game.o food.o snake.o communications.o
 	$(CC) $(CFLAGS) $^ -o $@ -lm
 	$(SIZE) $@
 

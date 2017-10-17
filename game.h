@@ -9,13 +9,13 @@
 
 #include "system.h"
 #include "tinygl.h"
-#include "task.h"
+#include "mod_task.h"
 #include "navswitch.h"
 #include "snake.h"
 #include "food.h"
 #include "communications.h"
 
 /** Begins the snake game */
-void begin_game(uint8_t playerNum);
+uint8_t begin_game(uint8_t playerNum);
 
 #endif
