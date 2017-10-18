@@ -11,6 +11,10 @@
 #include "ir_uart.h"
 #include "tinygl.h"
 
+/** Defines a magic number which is added to transmitted values in the
+ *  hopes of mitigating interference */
+#define MAGIC_NO 93
+
 /** Sends a value across IR transmission
  *  @param val the value to send
 */
@@ -19,7 +23,7 @@ void send_val(uint8_t val);
 /** Receives a value from IR receiver
  *  @return the received value
 */
-uint8_t receive_val();
+uint8_t receive_val(uint8_t min, uint8_t max);
 
 /** Sends a coordinate across IR transmission
  *  @param point the coordinate to send
