@@ -14,6 +14,7 @@
 static bool running = true;
 static uint8_t to_return = 0;
 
+
 /** End the task loop
  *  @param return_val the value to return from task_schedule
 */
@@ -22,6 +23,7 @@ void task_cancel(uint8_t return_val)
     running = false;
     to_return = return_val;
 }
+
 
 /** Schedule tasks
     @param tasks pointer to array of tasks (the highest priority

@@ -6,6 +6,7 @@
 
 #include "food.h"
 
+
 /** Generates a random integer between 0 and max-1. The algorithm is
  *  taken from http://wiki.osdev.org/Random_Number_Generator
  *  @param seed the seed from which to generate the random number
@@ -18,6 +19,7 @@ static uint8_t random(uint16_t seed, uint8_t max)
     random_seed = random_seed + seed * 1103515245 + 12345;
     return (random_seed / 65536) % (max + 1);
 }
+
 
 /** Checks whether a given position is one of the forbidden positions
  *  @param posn the position to check. Given as a single number
@@ -36,6 +38,7 @@ static bool check_forbidden(uint8_t posn, uint8_t num_forbidden, tinygl_point_t*
     }
     return false;
 }
+
 
 /** Generates a new position for food, which isn't any of the
  *  given forbidden positions

@@ -26,13 +26,9 @@ void send_val(uint8_t val);
 /** Receives a value from IR receiver
  *  @param min the minimum value to accept
  *  @param max the maximum value to accept
- *  @return the received value, or -1 if the read was unsuccessful
+ *  @return the received value
 */
-int8_t receive_val(uint8_t min, uint8_t max);
-
-void reliable_send_val(uint8_t val);
-
-uint8_t reliable_receive_val(uint8_t min, uint8_t max);
+uint8_t receive_val(uint8_t min, uint8_t max);
 
 /** Sends a coordinate across IR transmission
  *  @param point the coordinate to send
@@ -40,8 +36,7 @@ uint8_t reliable_receive_val(uint8_t min, uint8_t max);
 void send_coord(tinygl_point_t point);
 
 /** Receives a coordinate from IR receiver
- *  @return the received coordinate, which has a negative value of x
- *  if it was received unsuccessfully
+ *  @return the received coordinate
 */
 tinygl_point_t receive_coord(void);
 

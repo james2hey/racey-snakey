@@ -33,6 +33,7 @@ typedef struct game_data_s {
     uint8_t player_num;
 } game_data_t;
 
+
 /** Draws the static objects onto the LED matrix i.e. objects which only
  *  need to be redrawn when the game is updated. These objects are the
  *  player's snake and the food.
@@ -44,6 +45,7 @@ static void draw_static(game_data_t* game_data)
     tinygl_draw_point(game_data->food, 1);
     snake_draw(&game_data->snake1, 1);
 }
+
 
 /** Draws the dynamic objects onto the LED matrix i.e. objects which
  *  need to be redrawn on every refresh of the LED matrix. This is the
@@ -59,6 +61,7 @@ static void draw_dynamic(game_data_t* game_data)
     colour_tick = (colour_tick + 1) % COLOUR_STEPS;
 }
 
+
 /** Updates the LED matrix
  *  @param data game data, the snake and food positions
 */
@@ -72,6 +75,7 @@ static void display_task(void* data)
     tinygl_update();
     col = (col + 1) % TINYGL_WIDTH;
 }
+
 
 /** Checks if a move in the given direction is a valid move
  *  (i.e. isn't a move back onto the snake's tail)
@@ -88,6 +92,7 @@ static bool dir_okay(uint8_t dir, snake_t* snake)
         return (head_posn.x != snake->tail[1].x || head_posn.y != snake->tail[1].y);
     } 
 }
+
 
 /** Reads navswitch input and sets the snake to move in the
  *  corresponding direction.
@@ -116,6 +121,7 @@ static void control_task(void* data)
     }
 }
 
+
 /** Sends data about the player snake's position to the opponent, or
  *  receives data about the opponents snake.
  *  @param game_data game data, the snake and food positions
@@ -125,17 +131,18 @@ static void control_task(void* data)
 static void send_snake(game_data_t* game_data, uint8_t sender)
 {   
     if (game_data->player_num == sender) {
-        reliable_send_val(game_data->snake1.dir);
+        send_val(game_data->snake1.dir);
     } else {
-        game_data->snake2.dir = reliable_receive_val(UP, LEFT);
+        game_data->snake2.dir = receive_val(UP, LEFT);
     }
     
     if (game_data->player_num == sender) {
-        reliable_send_val(game_data->snake1.alive);
+        send_val(game_data->snake1.alive);
     } else {
-        game_data->snake2.alive = reliable_receive_val(0, 1);
+        game_data->snake2.alive = receive_val(0, 1);
     }
 }
+
 
 /** Clears the screen and ends the task loop so that it returns the
  *  game result.
@@ -148,6 +155,7 @@ static void end_game(uint8_t game_result)
     tinygl_update();
     task_cancel(game_result);
 }
+
 
 /** Moves the food to a new position
  *  @param game_data game data, the snake and food positions
@@ -167,6 +175,7 @@ static void make_new_food(game_data_t* game_data)
     
     game_data->food = new_food(length1 + length2, forbidden);
 }
+
 
 /** Updates the game state by moving the snakes, checking if
  *  have collided or eaten food
@@ -218,6 +227,7 @@ static void update_task(void* data)
     draw_static(game_data);
     display_task(data);
 }
+
 
 /** Begins the snake game 
  *  @param player_n indicates whether the funkit is player 1 or 2
