@@ -11,11 +11,7 @@
 */
 void send_val(uint8_t val) 
 {
-    uint8_t ack = 0;
-    while (ack != ACK_NO) {
-        ir_uart_putc(val + MAGIC_NO);
-        ack = ir_uart_getc();
-    }
+    ir_uart_putc(val);
 }
 
 
@@ -24,15 +20,9 @@ void send_val(uint8_t val)
  *  @param max the maximum value to accept
  *  @return the received value
 */
-uint8_t receive_val(uint8_t min, uint8_t max) 
+uint8_t receive_val() 
 {
-    uint8_t read = ir_uart_getc() - MAGIC_NO;
-    while (read < min || read > max) {
-        read = ir_uart_getc() - MAGIC_NO;
-        ir_uart_putc(0);
-    }
-    ir_uart_putc(ACK_NO);
-    return read;
+    return ir_uart_getc();
 }
 
 
@@ -52,7 +42,7 @@ void send_coord(tinygl_point_t point)
 tinygl_point_t receive_coord(void) 
 {
     tinygl_point_t coord;
-    uint8_t read = receive_val(0, TINYGL_WIDTH * TINYGL_HEIGHT - 1);
+    uint8_t read = receive_val();
     coord.x = read % TINYGL_WIDTH;
     coord.y = read / TINYGL_WIDTH;
     return coord;
