@@ -11,7 +11,11 @@
 */
 void send_val(uint8_t val) 
 {
-    ir_uart_putc(val + MAGIC_NO);
+    uint8_t ack = 0;
+    while (ack != ACK_NO) {
+        ir_uart_putc(val + MAGIC_NO);
+        ack = ir_uart_getc();
+    }
 }
 
 
@@ -25,7 +29,9 @@ uint8_t receive_val(uint8_t min, uint8_t max)
     uint8_t read = ir_uart_getc() - MAGIC_NO;
     while (read < min || read > max) {
         read = ir_uart_getc() - MAGIC_NO;
+        ir_uart_putc(0);
     }
+    ir_uart_putc(ACK_NO);
     return read;
 }
 
