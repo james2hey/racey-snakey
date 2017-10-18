@@ -1,11 +1,11 @@
 Competitive Snake
 A two player game based off the classic Nokia mobile phone game. However, 
 this game has two snakes. It is a race to eat the most food so you grow faster 
-than your opponent, so they hit your tail. Beware that you can collide with 
-your own tail as well!
+than your opponent. Try to make your opponent hit your tail. Beware, you 
+can collide with your own tail as well!
 
 Prerequisites
-1). It is assumed that you are using a Linux OS. Unexpected results may result
+1). It is assumed that you are using a Linux OS. Unexpected results may occur
     otherwise.
 2). Ensure you have two functioning ATmega32u2 microcontrollers, along with the
     USB cables for the UCFK4.
@@ -17,7 +17,8 @@ Installing
 2). Navigate to your desired installation directory.
 3). Clone Stephen Weddell's open source ence260-ucfk4 directory, using
     'git clone https://eng-git.canterbury.ac.nz/steve.weddell/ence260-ucfk4.git'
-4). Navigate to the 'assignment' folder.
+4). Navigate to the 'ence260-ucfk4' directory.
+4). Navigate to the 'assignment' directory.
 5). Clone Team 426's project into this directory, using
     'git clone https://eng-git.canterbury.ac.nz/ence260-2017/team426.git'.
 
@@ -29,6 +30,8 @@ Deployment
     Makefile, mod_task.c, setup.c, and snake.c.
 3). To build the program, use 'make program' for each of the UCFK4's. They
     should both display a message for the game to begin.
+4). If any problems arise, ensure that you are in the team426 directory and
+    that the makefile in this directory being run.
 
 Built With
 Geany - The IDE used.
