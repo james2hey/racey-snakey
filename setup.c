@@ -2,7 +2,7 @@
  *  @author Gerry Toft, 53712395, and James Toohey, 27073776, team 426
  *  @date 12/10/2017
  *  @brief Controls the flow of the game, with a continous loop 
- *  restarting the game until a player decides to quit.
+ *  restarting until the game is decided to be quit.
 */
 #include "system.h"
 #include "pacer.h"
@@ -10,34 +10,34 @@
 #include "ir_uart.h"
 #include "tinygl.h"
 #include "../fonts/font3x5_1.h"
-#include "timer.h"
 #include "game.h" 
 #include "stdbool.h"
-
 
 #define PACER_RATE 1000
 #define LOOP_RATE 1000
 #define MESSAGE_RATE 20
 #define COUNT_ITERATIONS 5800 // Counter to know when to stop messages.
-#define SENDING_NUMBER 191
 
 static int amount = 0;
 static int player_number = 0;
 
-/** Initilizes tinygl and sets the message to scroll and
- *  ask for the player to ready up. */
+
+/** Initilizes tinygl, sets the message to scroll and
+ *  rotates the text. */
 static void tinygl_startup(void)
 {
-    tinygl_init (LOOP_RATE);
-    tinygl_font_set (&font3x5_1);
-    tinygl_text_speed_set (MESSAGE_RATE);
-    
-    tinygl_text_mode_set (TINYGL_TEXT_MODE_SCROLL);
+    tinygl_init(LOOP_RATE);
+    tinygl_font_set(&font3x5_1);
+    tinygl_text_speed_set(MESSAGE_RATE);
+
+    tinygl_text_mode_set(TINYGL_TEXT_MODE_SCROLL);
     tinygl_text_dir_set(TINYGL_TEXT_DIR_ROTATE);
 }
 
-/** Retransmits the given character after 6000 calls.
- * @param character the character to potentially be retransmitted.
+
+/** Retransmits the given character after being called
+ *  'COUNT_ITERATIONS' times.
+ *  @param character the character to potentially be retransmitted.
  */
 static void retransmit(char character) {
     amount++;
@@ -47,7 +47,8 @@ static void retransmit(char character) {
     }
 }
 
-/** Sets the text to "wait"
+
+/** Sets the text to "waiting on player 2".
 */
 static void tinygl_wait_text(void)
 {
@@ -70,14 +71,6 @@ static void led_countdown(void)
     }
 }
 
-static void send_restarting_choice(char player_answer)
-{
-    if (player_answer == 'y') {
-        ir_uart_putc('y');
-    } else {
-        ir_uart_putc('n');
-    }
-}
 
 /** Waits for both players to push the navswitch, then exits the loop.
  *  The message displayed is "Click to ready up".
@@ -104,10 +97,9 @@ static void ready_up(void)
             }
             pushed = true;
             playerReady = 1;
-            
-            ir_uart_putc('z');
-            tinygl_wait_text();
-            //break;
+
+            ir_uart_putc('z');  // An uncommon letter used to avoid
+            tinygl_wait_text(); // interference when this was tested.
         }
         if (ir_uart_read_ready_p()) {
             if (ir_uart_getc() == 'z') {
@@ -144,6 +136,20 @@ static void end_game(int won)
 }
 
 
+/** Sends the characters answer over ir_uart, which signals
+ *  whether or not they want to restart the game.
+ *  @param player_answer char of the players answer; 'y' = yes,
+ *  'n' = no
+ */
+static void send_restarting_choice(char player_answer)
+{
+    if (player_answer == 'y') {
+        ir_uart_putc('y');
+    } else {
+        ir_uart_putc('n');
+    }
+}
+
 
 /** Checks if player 1 wants to restart game. They decide this by 
  *  scrolling on the navswitch to either 'yes' or 'no and then pushing. 
@@ -157,11 +163,12 @@ static bool restart(void)
     char player_answer = '?';
     bool answered = false;
 
-    while(!answered) {
+    while (!answered) {
         pacer_wait ();
         tinygl_update ();
         navswitch_update ();
 
+        // Player 1 controls the restart.
         if (player_number == 1) {
             if (navswitch_push_event_p (NAVSWITCH_NORTH)) {
                 tinygl_text(" YES");
@@ -173,12 +180,14 @@ static bool restart(void)
                 player_answer = 'n';
                 ir_uart_putc('n');
             }
+            // Sending the final decision.
             if (navswitch_push_event_p (NAVSWITCH_PUSH)) {
                 send_restarting_choice(player_answer);
                 ir_uart_putc('b');
-                answered = true;
+                answered = true; 
             }
-        } else {
+        // Player 2 watches a mirror of player 1's screen.
+        } else { 
             if (ir_uart_read_ready_p()) {
                 char choice = ir_uart_getc();
                 if (choice == 'y') {
@@ -187,6 +196,8 @@ static bool restart(void)
                 } else if (choice == 'n') {
                     player_answer = 'n';
                     tinygl_text(" NO");
+                    
+                // Receiving the final decision
                 } else if (choice == 'b') {
                     answered = true;
                 }
@@ -197,13 +208,13 @@ static bool restart(void)
 }
 
 
-/** Displays a goodbye message and then clears the tinygl matrix.
+/** Displays a gameover message, then clears the tinygl matrix.
  */
 static void terminate()
 {
     tinygl_clear();
     tinygl_update();
-    tinygl_text( " GOODBYE!");
+    tinygl_text( " GAMEOVER");
     int counter = 0;
     while (counter < COUNT_ITERATIONS) {
         pacer_wait ();
@@ -231,12 +242,11 @@ int main (void)
     int winner;
     while (keep_playing) {
         ready_up();
-        //led_countdown();
+        led_countdown();
         winner = begin_game(player_number);
         end_game(winner);
         keep_playing = restart();
     }
-
     terminate();
     return 0;
 }
