@@ -18,7 +18,7 @@
 #define PACER_RATE 1000
 #define LOOP_RATE 1000
 #define MESSAGE_RATE 20
-#define COUNT_ITERATIONS 5800 // Counter to know when to stop messages.
+#define COUNT_ITERATIONS 5800
 #define SENDING_NUMBER 191
 
 static int amount = 0;
@@ -47,22 +47,20 @@ static void retransmit(char character) {
     }
 }
 
-/** Sets the text to "wait"
-*/
+/** Sets the text to "wait" */
 static void tinygl_wait_text(void)
 {
     tinygl_text("  WAITING ON PLAYER2");
 }
 
 
-/** Displays a generic count down message from 3.
-*/
+/** Displays a generic count down message from 3    */
 static void led_countdown(void)
 {
     tinygl_clear();
     tinygl_text("  321 GO");
 
-    int counter = 0; 
+    int counter = 0;  //Counter to know when to stop the message. 
     while(counter < COUNT_ITERATIONS) {
         pacer_wait ();
         tinygl_update ();
@@ -70,17 +68,8 @@ static void led_countdown(void)
     }
 }
 
-static void send_restarting_choice(char player_answer)
-{
-    if (player_answer == 'y') {
-        ir_uart_putc('y');
-    } else {
-        ir_uart_putc('n');
-    }
-}
 
 /** Waits for both players to push the navswitch, then exits the loop.
- *  The message displayed is "Click to ready up".
  */
 static void ready_up(void)
 {
@@ -144,10 +133,32 @@ static void end_game(int won)
 }
 
 
+static void send_restarting_choice(char player_answer)
+{
+    if (player_answer == 'y') {
+        ir_uart_putc('y');
+    } else {
+        ir_uart_putc('n');
+    }
+}
 
-/** Checks if player 1 wants to restart game. They decide this by 
- *  scrolling on the navswitch to either 'yes' or 'no and then pushing. 
- *  This is displayed on both players screens.
+
+static char receive_restarting_choice(void)
+{
+    char choice = ir_uart_getc();
+    if (choice == 'y') { // Yes
+        return 'y';
+    } else if (choice == 'n') { // No
+        return 'n';
+    } else {
+        return '?'; // Undecided
+    }
+}
+
+/** Checks if player 1 wants to restart the game by them pushing
+ *  the navswitch on either "yes" or "no". This is displayed on
+ *  both players screens.
+ *  @return true if both players want to restart, false otherwise.
  */
 static bool restart(void)
 {
@@ -196,9 +207,6 @@ static bool restart(void)
     return player_answer == 'y';
 }
 
-
-/** Displays a goodbye message and then clears the tinygl matrix.
- */
 static void terminate()
 {
     tinygl_clear();
@@ -226,7 +234,7 @@ int main (void)
     pacer_init (PACER_RATE);
     navswitch_init();
     ir_uart_init();
-
+    
     bool keep_playing = true;
     int winner;
     while (keep_playing) {
@@ -236,7 +244,6 @@ int main (void)
         end_game(winner);
         keep_playing = restart();
     }
-
     terminate();
     return 0;
 }

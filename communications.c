@@ -1,6 +1,6 @@
 #include "communications.h"
 
-/*void send_val(uint8_t val) {
+void send_val(uint8_t val) {
     uint8_t ack = 0;
     while (ack != ACK_NO) {
         if (ir_uart_read_ready_p()) {
@@ -29,8 +29,8 @@ uint8_t receive_val(uint8_t min, uint8_t max) {
         }
     }
     return read;
-}*/
-
+}
+/*
 void send_val(uint8_t val) {
     ir_uart_putc(val + MAGIC_NO);
 }
@@ -43,7 +43,7 @@ uint8_t receive_val(uint8_t min, uint8_t max) {
     }
     return read;
 }
-
+*/
 void send_coord(tinygl_point_t point) {
     uint8_t to_send = TINYGL_WIDTH * point.y + point.x;
     send_val(to_send);
@@ -56,3 +56,4 @@ tinygl_point_t receive_coord(void) {
     coord.y = read / TINYGL_WIDTH;
     return coord;
 }
+
