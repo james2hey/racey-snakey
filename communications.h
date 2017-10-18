@@ -12,9 +12,11 @@
 #include "ir_uart.h"
 #include "tinygl.h"
 
+#define MAGIC_NO 95
+
 void send_val(uint8_t val);
 
-uint8_t receive_val(void);
+uint8_t receive_val(uint8_t min, uint8_t max);
 
 void send_coord(tinygl_point_t point);
 

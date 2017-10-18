@@ -15,6 +15,8 @@
 #include "food.h"
 #include "communications.h"
 
+enum result {LOSE, WIN, DRAW};
+
 /** Begins the snake game */
 uint8_t begin_game(uint8_t playerNum);
 
