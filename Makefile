@@ -31,7 +31,7 @@ food.o: food.c ../../drivers/avr/system.h ../../utils/tinygl.h ../../drivers/avr
 snake.o: snake.c ../../drivers/avr/system.h ../../utils/tinygl.h snake.h
 	$(CC) -c $(CFLAGS) $< -o $@
 
-communications.o: communications.c ../../drivers/avr/system.h ../../utils/pacer.h ../../drivers/avr/ir_uart.c ../../utils/tinygl.h communications.h
+communications.o: communications.c ../../drivers/avr/system.h ../../drivers/avr/ir_uart.c ../../utils/tinygl.h communications.h
 	$(CC) -c $(CFLAGS) $< -o $@
 	
 # Supplied files.
