@@ -1,13 +1,32 @@
 #include "communications.h"
 
 void send_val(uint8_t val) {
-    ir_uart_putc(val + MAGIC_NO);
+    uint8_t ack = 0;
+    while (ack != ACK_NO) {
+        if (ir_uart_read_ready_p()) {
+            ack = ir_uart_getc();
+        } else {
+            ir_uart_putc(val + MAGIC_NO);
+            pacer_wait();
+        }
+    }
 }
 
 uint8_t receive_val(uint8_t min, uint8_t max) {
-    uint8_t read = ir_uart_getc() - MAGIC_NO;
-    while (read < min || read > max) {
-        read = ir_uart_getc() - MAGIC_NO;
+    bool received = false;
+    uint8_t read = 0;
+    while (!received) {
+        if (ir_uart_read_ready_p()) {
+            read = ir_uart_getc() - MAGIC_NO;
+            if (read >= min && read <= max) {
+                ir_uart_putc(ACK_NO);
+                received = true;
+            }
+        }
+        
+        if (!received) {
+            pacer_wait();
+        }
     }
     return read;
 }

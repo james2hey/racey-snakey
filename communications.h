@@ -8,11 +8,12 @@
 #define COMMUNICATIONS_H
 
 #include "system.h"
-#include "timer.h"
+#include "pacer.h"
 #include "ir_uart.h"
 #include "tinygl.h"
 
 #define MAGIC_NO 95
+#define ACK_NO 64
 
 void send_val(uint8_t val);
 
