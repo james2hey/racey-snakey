@@ -1,4 +1,4 @@
-Competitive Snake
+Racey Snakey
 A two player game based off the classic Nokia mobile phone game. However, 
 this game has two snakes. It is a race to eat the most food so you grow faster 
 than your opponent. Try to make your opponent hit your tail. Beware, you 
