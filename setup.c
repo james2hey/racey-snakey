@@ -210,7 +210,7 @@ static bool restart(void)
 
 /** Displays a gameover message, then clears the tinygl matrix.
  */
-static void terminate()
+static void terminate(void)
 {
     tinygl_clear();
     tinygl_update();
